@@ -1,9 +1,12 @@
+import Navbar from "./components/layout/Navbar";
+import Dashboard from "./pages/Dashboard";
+
 function App() {
   return (
-    <div>
-      <h1>Welcome to Trackora</h1>
-      <p>Your job search starts here!</p>
-    </div>
+    <>
+      <Navbar />
+      <Dashboard />
+    </>
   );
 }
 
