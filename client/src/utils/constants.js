@@ -23,4 +23,13 @@ export const jobs = [
     appliedDate: "July 1, 2026",
     location: "Manassas, VA",
   },
+
+  {
+    id: 4,
+    title: "Backend Developer",
+    company: "Google",
+    status: "Rejected",
+    appliedDate: "June 28, 2026",
+    location: "Washington, DC",
+  },
 ];

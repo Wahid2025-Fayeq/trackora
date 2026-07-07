@@ -1,8 +1,28 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
+  overflow-x: hidden;
 }
+
 #root {
   min-height: 100vh;
+  overflow-x: hidden;
+}
+button,
+a {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
