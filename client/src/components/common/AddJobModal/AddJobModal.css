@@ -1,0 +1,45 @@
+.add-job-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.add-job-modal__content {
+  position: relative;
+
+  width: 100%;
+  max-width: 500px;
+
+  padding: 32px;
+
+  background: #fff;
+  border-radius: 16px;
+}
+
+.add-job-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.add-job-modal__title {
+  margin: 0 0 24px;
+}
+
+.add-job-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

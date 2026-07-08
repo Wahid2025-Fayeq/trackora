@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import Container from "../../components/ui/Container";
+import Button from "../../components/ui/Button/Button";
 import JobCard from "../../components/common/JobCard";
-import { getJobs } from "../../utils/jobsApi";
+import { getJobs } from "../../services/jobsApi";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import { SearchX } from "lucide-react";
@@ -12,6 +14,7 @@ function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,6 +33,24 @@ function Dashboard() {
         setIsLoading(false);
       });
   }, []);
+
+  const handleOpenAddJobModal = () => {
+    setIsAddJobModalOpen(true);
+  };
+
+  const handleCloseAddJobModal = () => {
+    setIsAddJobModalOpen(false);
+  };
+
+  const handleAddJob = (newJob) => {
+    setJobs((prevJobs) => [
+      {
+        id: Date.now(),
+        ...newJob,
+      },
+      ...prevJobs,
+    ]);
+  };
 
   const filteredJobs = jobs.filter((job) =>
     `${job.title} ${job.company} ${job.location}`
@@ -53,6 +74,7 @@ function Dashboard() {
           <p className="dashboard__subtitle">
             Track your applications, interviews, and saved jobs in one place.
           </p>
+          <Button onClick={handleOpenAddJobModal}>Add Job</Button>
         </section>
         <section className="dashboard__stats">
           <StatsCard title="Applied" value={appliedJobs} />
@@ -96,6 +118,11 @@ function Dashboard() {
           )}
         </section>
       </Container>
+      <AddJobModal
+        isOpen={isAddJobModalOpen}
+        onClose={handleCloseAddJobModal}
+        onAddJob={handleAddJob}
+      />
     </main>
   );
 }
