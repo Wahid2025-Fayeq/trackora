@@ -3,9 +3,15 @@ import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button/Button";
 import JobCard from "../../components/common/JobCard";
-import { getJobs } from "../../services/jobsApi";
+import {
+  getJobs,
+  createJob,
+  updateJob,
+  deleteJob,
+} from "../../services/jobsApi";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
+import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import { SearchX } from "lucide-react";
 import "./Dashboard.css";
 
@@ -15,6 +21,8 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
+  const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,16 +50,44 @@ function Dashboard() {
     setIsAddJobModalOpen(false);
   };
 
-  const handleAddJob = (newJob) => {
-    setJobs((prevJobs) => [
-      {
-        id: Date.now(),
-        ...newJob,
-      },
-      ...prevJobs,
-    ]);
+  const handleCloseEditJobModal = () => {
+    setIsEditJobModalOpen(false);
+    setSelectedJob(null);
   };
 
+  const handleUpdateJob = (updatedJob) => {
+    updateJob(updatedJob.id, updatedJob)
+      .then((savedJob) => {
+        setJobs((prevJobs) =>
+          prevJobs.map((job) => (job.id === savedJob.id ? savedJob : job)),
+        );
+      })
+      .catch((error) => {
+        console.error("Failed to update job:", error);
+      });
+  };
+  const handleEditJobClick = (job) => {
+    setSelectedJob(job);
+    setIsEditJobModalOpen(true);
+  };
+  const handleAddJob = (newJob) => {
+    createJob(newJob)
+      .then((createdJob) => {
+        setJobs((prevJobs) => [createdJob, ...prevJobs]);
+      })
+      .catch((error) => {
+        console.error("Failed to add job:", error);
+      });
+  };
+  const handleDeleteJob = (jobId) => {
+    deleteJob(jobId)
+      .then(() => {
+        setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+      })
+      .catch((error) => {
+        console.error("Failed to delete job:", error);
+      });
+  };
   const filteredJobs = jobs.filter((job) =>
     `${job.title} ${job.company} ${job.location}`
       .toLowerCase()
@@ -99,11 +135,9 @@ function Dashboard() {
               {filteredJobs.map((job) => (
                 <JobCard
                   key={job.id}
-                  title={job.title}
-                  company={job.company}
-                  status={job.status}
-                  appliedDate={job.appliedDate}
-                  location={job.location}
+                  job={job}
+                  onEdit={handleEditJobClick}
+                  onDelete={handleDeleteJob}
                 />
               ))}
             </div>
@@ -122,6 +156,13 @@ function Dashboard() {
         isOpen={isAddJobModalOpen}
         onClose={handleCloseAddJobModal}
         onAddJob={handleAddJob}
+      />
+
+      <EditJobModal
+        isOpen={isEditJobModalOpen}
+        onClose={handleCloseEditJobModal}
+        job={selectedJob}
+        onUpdateJob={handleUpdateJob}
       />
     </main>
   );

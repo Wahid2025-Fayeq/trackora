@@ -1,18 +1,12 @@
 import { useEffect } from "react";
 import JobForm from "../JobForm/JobForm";
-import "./AddJobModal.css";
+import "./EditJobModal.css";
 
-function AddJobModal({ isOpen, onClose, onAddJob }) {
+function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
   const handleSubmit = (formData) => {
-    onAddJob({
-      id: Date.now(),
+    onUpdateJob({
+      ...job,
       ...formData,
-      status: "Applied",
-      appliedDate: new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      }),
     });
 
     onClose();
@@ -48,30 +42,34 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
     };
   }, [isOpen]);
 
-  if (!isOpen) {
+  if (!isOpen || !job) {
     return null;
   }
 
   return (
-    <div className="add-job-modal" onClick={onClose}>
+    <div className="edit-job-modal" onClick={onClose}>
       <div
-        className="add-job-modal__content"
+        className="edit-job-modal__content"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="add-job-modal__close"
+          className="edit-job-modal__close"
           type="button"
           onClick={onClose}
         >
           ×
         </button>
 
-        <h2 className="add-job-modal__title">Add New Job</h2>
+        <h2 className="edit-job-modal__title">Edit Job</h2>
 
-        <JobForm onSubmit={handleSubmit} submitButtonText="Add Job" />
+        <JobForm
+          initialValues={job}
+          onSubmit={handleSubmit}
+          submitButtonText="Save Changes"
+        />
       </div>
     </div>
   );
 }
 
-export default AddJobModal;
+export default EditJobModal;

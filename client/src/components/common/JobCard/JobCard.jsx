@@ -2,7 +2,9 @@ import Button from "../../ui/Button";
 import { statusConfig } from "../../../utils/statusConfig";
 import "./JobCard.css";
 
-function JobCard({ title, company, status, appliedDate, location }) {
+function JobCard({ job, onEdit, onDelete }) {
+  const { title, company, status, appliedDate, location } = job;
+
   const currentStatus = statusConfig[status];
   const StatusIcon = currentStatus?.icon;
 
@@ -28,8 +30,10 @@ function JobCard({ title, company, status, appliedDate, location }) {
         <Button size="small" variant="secondary">
           View
         </Button>
-        <Button size="small">Edit</Button>
-        <Button size="small" variant="danger">
+        <Button size="small" variant="primary" onClick={() => onEdit(job)}>
+          Edit
+        </Button>
+        <Button size="small" variant="danger" onClick={() => onDelete(job.id)}>
           Delete
         </Button>
       </div>

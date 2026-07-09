@@ -1,0 +1,34 @@
+.edit-job-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background-color: rgba(17, 24, 39, 0.6);
+  z-index: 1000;
+}
+
+.edit-job-modal__content {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border-radius: 16px;
+  background-color: #ffffff;
+}
+
+.edit-job-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.edit-job-modal__title {
+  margin: 0 0 24px;
+  font-size: 24px;
+}
