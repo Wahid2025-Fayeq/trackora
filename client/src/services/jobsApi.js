@@ -1,7 +1,7 @@
 import { jobs } from "../utils/constants";
 
 const BASE_URL = "http://localhost:3001";
-const USE_MOCK_API = true;
+const USE_MOCK_API = false;
 
 const checkResponse = (res) => {
   if (res.ok) {
