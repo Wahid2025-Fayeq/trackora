@@ -33,7 +33,7 @@ function JobCard({ job, onEdit, onDelete }) {
         <Button size="small" variant="primary" onClick={() => onEdit(job)}>
           Edit
         </Button>
-        <Button size="small" variant="danger" onClick={() => onDelete(job.id)}>
+        <Button size="small" variant="danger" onClick={() => onDelete(job._id)}>
           Delete
         </Button>
       </div>

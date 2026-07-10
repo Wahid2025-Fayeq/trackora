@@ -1,50 +1,74 @@
-const jobs = require("../data/jobs");
+const Job = require("../models/Job");
 
-const getJobs = (req, res) => {
-  res.json(jobs);
-};
+const getJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find().sort({ createdAt: -1 });
 
-const createJob = (req, res) => {
-  const newJob = {
-    id: Date.now(),
-    ...req.body,
-  };
+    return res.json(jobs);
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
 
-  jobs.push(newJob);
-
-  res.status(201).json(newJob);
-};
-
-const updateJob = (req, res) => {
-  const jobId = Number(req.params.id);
-
-  const jobIndex = jobs.findIndex((job) => job.id === jobId);
-
-  if (jobIndex === -1) {
-    return res.status(404).json({ message: "Job not found" });
+    return res.status(500).json({
+      message: "Failed to fetch jobs",
+    });
   }
-
-  jobs[jobIndex] = {
-    ...jobs[jobIndex],
-    ...req.body,
-    id: jobId,
-  };
-
-  return res.json(jobs[jobIndex]);
 };
 
-const deleteJob = (req, res) => {
-  const jobId = Number(req.params.id);
+const createJob = async (req, res) => {
+  try {
+    const newJob = await Job.create(req.body);
 
-  const jobIndex = jobs.findIndex((job) => job.id === jobId);
+    return res.status(201).json(newJob);
+  } catch (error) {
+    console.error("Error creating job:", error);
 
-  if (jobIndex === -1) {
-    return res.status(404).json({ message: "Job not found" });
+    return res.status(400).json({
+      message: "Failed to create job",
+    });
   }
+};
 
-  const deletedJob = jobs.splice(jobIndex, 1);
+const updateJob = async (req, res) => {
+  try {
+    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
-  return res.json(deletedJob[0]);
+    if (!updatedJob) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    return res.json(updatedJob);
+  } catch (error) {
+    console.error("Error updating job:", error);
+
+    return res.status(400).json({
+      message: "Failed to update job",
+    });
+  }
+};
+
+const deleteJob = async (req, res) => {
+  try {
+    const deletedJob = await Job.findByIdAndDelete(req.params.id);
+
+    if (!deletedJob) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    return res.json(deletedJob);
+  } catch (error) {
+    console.error("Error deleting job:", error);
+
+    return res.status(400).json({
+      message: "Failed to delete job",
+    });
+  }
 };
 
 module.exports = {

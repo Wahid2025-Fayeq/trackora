@@ -56,10 +56,10 @@ function Dashboard() {
   };
 
   const handleUpdateJob = (updatedJob) => {
-    updateJob(updatedJob.id, updatedJob)
+    updateJob(updatedJob._id, updatedJob)
       .then((savedJob) => {
         setJobs((prevJobs) =>
-          prevJobs.map((job) => (job.id === savedJob.id ? savedJob : job)),
+          prevJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
         );
       })
       .catch((error) => {
@@ -82,7 +82,7 @@ function Dashboard() {
   const handleDeleteJob = (jobId) => {
     deleteJob(jobId)
       .then(() => {
-        setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
       })
       .catch((error) => {
         console.error("Failed to delete job:", error);
@@ -134,7 +134,7 @@ function Dashboard() {
             <div className="dashboard__job-list">
               {filteredJobs.map((job) => (
                 <JobCard
-                  key={job.id}
+                  key={job._id}
                   job={job}
                   onEdit={handleEditJobClick}
                   onDelete={handleDeleteJob}
