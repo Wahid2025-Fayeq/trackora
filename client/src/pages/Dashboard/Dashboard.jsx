@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button/Button";
+import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import JobCard from "../../components/common/JobCard";
 import {
   getJobs,
@@ -23,6 +24,7 @@ function Dashboard() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [isViewJobModalOpen, setIsViewJobModalOpen] = useState(false);
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -48,6 +50,16 @@ function Dashboard() {
 
   const handleOpenAddJobModal = () => {
     setIsAddJobModalOpen(true);
+  };
+
+  const handleViewJobClick = (job) => {
+    setSelectedJob(job);
+    setIsViewJobModalOpen(true);
+  };
+
+  const handleCloseViewJobModal = () => {
+    setIsViewJobModalOpen(false);
+    setSelectedJob(null);
   };
 
   const handleCloseAddJobModal = () => {
@@ -174,6 +186,7 @@ function Dashboard() {
                 <JobCard
                   key={job._id}
                   job={job}
+                  onView={handleViewJobClick}
                   onEdit={handleEditJobClick}
                   onDelete={handleDeleteJob}
                 />
@@ -204,6 +217,11 @@ function Dashboard() {
         onClose={handleCloseEditJobModal}
         job={selectedJob}
         onUpdateJob={handleUpdateJob}
+      />
+      <ViewJobModal
+        isOpen={isViewJobModalOpen}
+        onClose={handleCloseViewJobModal}
+        job={selectedJob}
       />
     </main>
   );

@@ -1,12 +1,19 @@
 import Button from "../../ui/Button";
 import { statusConfig } from "../../../utils/statusConfig";
+import formatDate from "../../../utils/formatDate";
 import "./JobCard.css";
 
-function JobCard({ job, onEdit, onDelete }) {
+function JobCard({ job, onView, onEdit, onDelete }) {
   const { title, company, status, appliedDate, location } = job;
 
   const currentStatus = statusConfig[status];
   const StatusIcon = currentStatus?.icon;
+
+  const handleViewClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onView(job);
+  };
 
   return (
     <article className="job-card">
@@ -21,16 +28,26 @@ function JobCard({ job, onEdit, onDelete }) {
             {StatusIcon && <StatusIcon size={14} />}
             {currentStatus?.label}
           </span>
-          <span>{appliedDate}</span>
+          <span>{formatDate(appliedDate)}</span>
           <span>{location}</span>
         </div>
       </div>
 
       <div className="job-card__actions">
-        <Button size="small" variant="secondary">
+        <Button
+          type="button"
+          size="small"
+          variant="secondary"
+          onClick={handleViewClick}
+        >
           View
         </Button>
-        <Button size="small" variant="primary" onClick={() => onEdit(job)}>
+        <Button
+          type="button"
+          size="small"
+          variant="primary"
+          onClick={() => onEdit(job)}
+        >
           Edit
         </Button>
         <Button size="small" variant="danger" onClick={() => onDelete(job._id)}>

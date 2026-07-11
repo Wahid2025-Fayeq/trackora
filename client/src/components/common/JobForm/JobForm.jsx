@@ -1,13 +1,28 @@
 import { useEffect, useState } from "react";
 import Button from "../../ui/Button/Button";
 import Input from "../../ui/Input/Input";
+import Select from "../../ui/Select/Select";
+import Textarea from "../../ui/Textarea/Textarea";
 import "./JobForm.css";
 
 const defaultInitialValues = {
   title: "",
   company: "",
   location: "",
+  status: "",
+  appliedDate: new Date().toISOString().split("T")[0],
+  notes: "",
 };
+
+const statusOptions = [
+  { value: "", label: "Select status" },
+  { value: "Saved", label: "Saved" },
+  { value: "Applied", label: "Applied" },
+  { value: "Interview", label: "Interview" },
+  { value: "Offer", label: "Offer" },
+  { value: "Rejected", label: "Rejected" },
+];
+
 function JobForm({
   initialValues = defaultInitialValues,
   onSubmit,
@@ -32,7 +47,9 @@ function JobForm({
   const isFormValid =
     formData.title.trim() &&
     formData.company.trim() &&
-    formData.location.trim();
+    formData.location.trim() &&
+    formData.status &&
+    formData.appliedDate;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,7 +89,30 @@ function JobForm({
         disabled={isSubmitting}
         placeholder="Arlington, VA"
       />
-
+      <Input
+        label="Application Date"
+        type="date"
+        name="appliedDate"
+        value={formData.appliedDate}
+        onChange={handleChange}
+        disabled={isSubmitting}
+      />
+      <Select
+        label="Status"
+        name="status"
+        value={formData.status}
+        onChange={handleChange}
+        options={statusOptions}
+        disabled={isSubmitting}
+      />
+      <Textarea
+        label="Notes"
+        name="notes"
+        value={formData.notes}
+        onChange={handleChange}
+        placeholder="Add interview notes, recruiter information, salary, follow-up reminders..."
+        disabled={isSubmitting}
+      />
       <Button
         type="submit"
         variant="primary"

@@ -1,0 +1,131 @@
+.view-job-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(17, 24, 39, 0.55);
+}
+
+.view-job-modal__content {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.view-job-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.view-job-modal__close:hover {
+  color: #111827;
+}
+
+.view-job-modal__title {
+  margin: 0 36px 6px 0;
+  color: #111827;
+  font-size: 24px;
+}
+
+.view-job-modal__company {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.view-job-modal__header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.view-job-modal__details {
+  display: grid;
+  gap: 18px;
+  padding: 24px 0;
+}
+
+.view-job-modal__detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.view-job-modal__label {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.view-job-modal__value {
+  color: #111827;
+  text-align: right;
+}
+
+.view-job-modal__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.view-job-modal__status_applied {
+  color: #2563eb;
+  background-color: #dbeafe;
+}
+
+.view-job-modal__status_interview {
+  color: #047857;
+  background-color: #d1fae5;
+}
+
+.view-job-modal__status_saved {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+
+.view-job-modal__status_offer {
+  color: #6d28d9;
+  background-color: #ede9fe;
+}
+
+.view-job-modal__status_rejected {
+  color: #b91c1c;
+  background-color: #fee2e2;
+}
+
+.view-job-modal__notes {
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.view-job-modal__notes-title {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 16px;
+}
+
+.view-job-modal__notes-text {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
