@@ -110,7 +110,12 @@ function JobForm({
         name="notes"
         value={formData.notes}
         onChange={handleChange}
-        placeholder="Add interview notes, recruiter information, salary, follow-up reminders..."
+        placeholder={`Recruiter:
+Salary:
+Interview Date:
+Follow-up Date:
+Job URL:
+Notes:`}
         disabled={isSubmitting}
       />
       <Button
