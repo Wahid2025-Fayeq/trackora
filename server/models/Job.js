@@ -26,6 +26,11 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    notes: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
   {
     timestamps: true,
