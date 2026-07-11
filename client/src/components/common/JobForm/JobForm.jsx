@@ -12,6 +12,7 @@ function JobForm({
   initialValues = defaultInitialValues,
   onSubmit,
   submitButtonText = "Save",
+  isSubmitting = false,
 }) {
   const [formData, setFormData] = useState(initialValues);
 
@@ -36,7 +37,7 @@ function JobForm({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!isFormValid) {
+    if (!isFormValid || isSubmitting) {
       return;
     }
 
@@ -51,6 +52,7 @@ function JobForm({
         value={formData.title}
         onChange={handleChange}
         placeholder="Frontend Developer"
+        disabled={isSubmitting}
       />
 
       <Input
@@ -58,6 +60,7 @@ function JobForm({
         name="company"
         value={formData.company}
         onChange={handleChange}
+        disabled={isSubmitting}
         placeholder="Amazon"
       />
 
@@ -66,10 +69,17 @@ function JobForm({
         name="location"
         value={formData.location}
         onChange={handleChange}
+        disabled={isSubmitting}
         placeholder="Arlington, VA"
       />
 
-      <Button type="submit" variant="primary" disabled={!isFormValid}>
+      <Button
+        type="submit"
+        variant="primary"
+        disabled={!isFormValid || isSubmitting}
+        isLoading={isSubmitting}
+        loadingText="Saving..."
+      >
         {submitButtonText}
       </Button>
     </form>

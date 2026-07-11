@@ -1,15 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import JobForm from "../JobForm/JobForm";
 import "./EditJobModal.css";
 
 function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = (formData) => {
+    setIsSubmitting(true);
+
     onUpdateJob({
       ...job,
       ...formData,
-    });
-
-    onClose();
+    })
+      .then(() => {
+        onClose();
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   useEffect(() => {
@@ -18,7 +26,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
     }
 
     const handleEsc = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
@@ -28,7 +36,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isSubmitting]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -47,7 +55,10 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
   }
 
   return (
-    <div className="edit-job-modal" onClick={onClose}>
+    <div
+      className="edit-job-modal"
+      onClick={!isSubmitting ? onClose : undefined}
+    >
       <div
         className="edit-job-modal__content"
         onClick={(e) => e.stopPropagation()}
@@ -56,6 +67,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
           className="edit-job-modal__close"
           type="button"
           onClick={onClose}
+          disabled={isSubmitting}
         >
           ×
         </button>
@@ -66,6 +78,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
           initialValues={job}
           onSubmit={handleSubmit}
           submitButtonText="Save Changes"
+          isSubmitting={isSubmitting}
         />
       </div>
     </div>

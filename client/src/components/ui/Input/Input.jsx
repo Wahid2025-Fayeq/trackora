@@ -8,6 +8,7 @@ function Input({
   onChange,
   error,
   name,
+  disabled = false,
 }) {
   return (
     <div className="input">
@@ -20,6 +21,7 @@ function Input({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
       />
       {error && <span className="input__error">{error}</span>}
     </div>

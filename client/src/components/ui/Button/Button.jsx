@@ -7,6 +7,7 @@ function Button({
   size = "medium",
   disabled = false,
   isLoading = false,
+  loadingText = "Loading...",
   onClick,
 }) {
   return (
@@ -16,7 +17,7 @@ function Button({
       disabled={disabled || isLoading}
       onClick={onClick}
     >
-      {isLoading ? "Loading..." : children}
+      {isLoading ? loadingText : children}
     </button>
   );
 }

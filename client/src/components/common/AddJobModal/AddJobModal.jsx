@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import JobForm from "../JobForm/JobForm";
 import "./AddJobModal.css";
 
 function AddJobModal({ isOpen, onClose, onAddJob }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = (formData) => {
+    setIsSubmitting(true);
+
     onAddJob({
-      id: Date.now(),
       ...formData,
       status: "Applied",
       appliedDate: new Date().toLocaleDateString("en-US", {
@@ -13,9 +16,13 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
         day: "numeric",
         year: "numeric",
       }),
-    });
-
-    onClose();
+    })
+      .then(() => {
+        onClose();
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   useEffect(() => {
@@ -24,7 +31,7 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
     }
 
     const handleEsc = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
@@ -34,7 +41,7 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isSubmitting]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -53,7 +60,10 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
   }
 
   return (
-    <div className="add-job-modal" onClick={onClose}>
+    <div
+      className="add-job-modal"
+      onClick={!isSubmitting ? onClose : undefined}
+    >
       <div
         className="add-job-modal__content"
         onClick={(e) => e.stopPropagation()}
@@ -62,13 +72,18 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
           className="add-job-modal__close"
           type="button"
           onClick={onClose}
+          disabled={isSubmitting}
         >
           ×
         </button>
 
         <h2 className="add-job-modal__title">Add New Job</h2>
 
-        <JobForm onSubmit={handleSubmit} submitButtonText="Add Job" />
+        <JobForm
+          onSubmit={handleSubmit}
+          submitButtonText="Add Job"
+          isSubmitting={isSubmitting}
+        />
       </div>
     </div>
   );

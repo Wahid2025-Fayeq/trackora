@@ -24,11 +24,11 @@ function Dashboard() {
   const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
 
-  useEffect(() => {
+  const loadJobs = () => {
     setIsLoading(true);
     setError("");
 
-    getJobs()
+    return getJobs()
       .then((jobsData) => {
         setJobs(jobsData);
       })
@@ -40,6 +40,10 @@ function Dashboard() {
       .finally(() => {
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadJobs();
   }, []);
 
   const handleOpenAddJobModal = () => {
@@ -50,13 +54,29 @@ function Dashboard() {
     setIsAddJobModalOpen(false);
   };
 
+  const handleEditJobClick = (job) => {
+    setSelectedJob(job);
+    setIsEditJobModalOpen(true);
+  };
+
   const handleCloseEditJobModal = () => {
     setIsEditJobModalOpen(false);
     setSelectedJob(null);
   };
 
+  const handleAddJob = (newJob) => {
+    return createJob(newJob)
+      .then((createdJob) => {
+        setJobs((prevJobs) => [createdJob, ...prevJobs]);
+      })
+      .catch((error) => {
+        console.error("Failed to add job:", error);
+        throw error;
+      });
+  };
+
   const handleUpdateJob = (updatedJob) => {
-    updateJob(updatedJob._id, updatedJob)
+    return updateJob(updatedJob._id, updatedJob)
       .then((savedJob) => {
         setJobs((prevJobs) =>
           prevJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
@@ -64,22 +84,19 @@ function Dashboard() {
       })
       .catch((error) => {
         console.error("Failed to update job:", error);
+        throw error;
       });
   };
-  const handleEditJobClick = (job) => {
-    setSelectedJob(job);
-    setIsEditJobModalOpen(true);
-  };
-  const handleAddJob = (newJob) => {
-    createJob(newJob)
-      .then((createdJob) => {
-        setJobs((prevJobs) => [createdJob, ...prevJobs]);
-      })
-      .catch((error) => {
-        console.error("Failed to add job:", error);
-      });
-  };
+
   const handleDeleteJob = (jobId) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this job?",
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
     deleteJob(jobId)
       .then(() => {
         setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
@@ -88,10 +105,13 @@ function Dashboard() {
         console.error("Failed to delete job:", error);
       });
   };
+
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+
   const filteredJobs = jobs.filter((job) =>
     `${job.title} ${job.company} ${job.location}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase()),
+      .includes(normalizedSearchTerm),
   );
 
   const appliedJobs = jobs.filter((job) => job.status === "Applied").length;
@@ -107,17 +127,21 @@ function Dashboard() {
       <Container>
         <section className="dashboard__header">
           <h1 className="dashboard__title">Welcome back, Wahid</h1>
+
           <p className="dashboard__subtitle">
             Track your applications, interviews, and saved jobs in one place.
           </p>
+
           <Button onClick={handleOpenAddJobModal}>Add Job</Button>
         </section>
+
         <section className="dashboard__stats">
           <StatsCard title="Applied" value={appliedJobs} />
           <StatsCard title="Interview" value={interviewJobs} />
           <StatsCard title="Saved" value={savedJobs} />
           <StatsCard title="Offer" value={offerJobs} />
         </section>
+
         <section className="dashboard__jobs">
           <h2 className="dashboard__section-title">Recent Applications</h2>
 
@@ -129,6 +153,20 @@ function Dashboard() {
             <div className="dashboard__error">
               <h3>Something went wrong</h3>
               <p>{error}</p>
+
+              <Button variant="secondary" onClick={loadJobs}>
+                Try Again
+              </Button>
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="dashboard__empty-state">
+              <SearchX className="dashboard__empty-icon" size={40} />
+
+              <h3 className="dashboard__empty-title">No jobs yet</h3>
+
+              <p className="dashboard__empty-text">
+                Add your first job application to get started.
+              </p>
             </div>
           ) : filteredJobs.length > 0 ? (
             <div className="dashboard__job-list">
@@ -144,14 +182,17 @@ function Dashboard() {
           ) : (
             <div className="dashboard__empty-state">
               <SearchX className="dashboard__empty-icon" size={40} />
-              <h3 className="dashboard__empty-title">No jobs found</h3>
+
+              <h3 className="dashboard__empty-title">No matching jobs</h3>
+
               <p className="dashboard__empty-text">
-                Try searching for a different job title, company, or location.
+                Try a different job title, company, or location.
               </p>
             </div>
           )}
         </section>
       </Container>
+
       <AddJobModal
         isOpen={isAddJobModalOpen}
         onClose={handleCloseAddJobModal}

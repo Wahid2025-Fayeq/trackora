@@ -83,7 +83,9 @@
   margin: 0;
   color: #7f1d1d;
 }
-
+.dashboard__error .button {
+  margin-top: 16px;
+}
 @media screen and (max-width: 900px) {
   .dashboard__stats {
     grid-template-columns: repeat(2, 1fr);
