@@ -1,20 +1,25 @@
-import { Bookmark, CircleX, FileText, Target } from "lucide-react";
+import { Bookmark, CircleX, FileText, Target, Trophy } from "lucide-react";
 
 export const statusConfig = {
-  Interview: {
-    label: "Interview",
-    icon: Target,
-    className: "interview",
+  Saved: {
+    label: "Saved",
+    icon: Bookmark,
+    className: "saved",
   },
   Applied: {
     label: "Applied",
     icon: FileText,
     className: "applied",
   },
-  Saved: {
-    label: "Saved",
-    icon: Bookmark,
-    className: "saved",
+  Interview: {
+    label: "Interview",
+    icon: Target,
+    className: "interview",
+  },
+  Offer: {
+    label: "Offer",
+    icon: Trophy,
+    className: "offer",
   },
   Rejected: {
     label: "Rejected",

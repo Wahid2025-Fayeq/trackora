@@ -4,12 +4,14 @@ import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button/Button";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import JobCard from "../../components/common/JobCard";
+import { getJobAnalytics } from "../../utils/jobAnalytics";
 import {
   getJobs,
   createJob,
   updateJob,
   deleteJob,
 } from "../../services/jobsApi";
+import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import Select from "../../components/ui/Select/Select";
@@ -149,13 +151,16 @@ function Dashboard() {
     }
   });
 
-  const appliedJobs = jobs.filter((job) => job.status === "Applied").length;
-
-  const interviewJobs = jobs.filter((job) => job.status === "Interview").length;
-
-  const savedJobs = jobs.filter((job) => job.status === "Saved").length;
-
-  const offerJobs = jobs.filter((job) => job.status === "Offer").length;
+  const {
+    totalJobs,
+    appliedJobs,
+    interviewJobs,
+    savedJobs,
+    offerJobs,
+    activeJobs,
+    interviewRate,
+    offerRate,
+  } = getJobAnalytics(jobs);
 
   return (
     <main className="dashboard">
@@ -176,7 +181,35 @@ function Dashboard() {
           <StatsCard title="Saved" value={savedJobs} />
           <StatsCard title="Offer" value={offerJobs} />
         </section>
+        <section className="dashboard__analytics">
+          <h2 className="dashboard__section-title">Job Search Analytics</h2>
 
+          <div className="dashboard__analytics-summary">
+            <div>
+              <span className="dashboard__analytics-label">Total Jobs</span>
+              <strong className="dashboard__analytics-value">
+                {totalJobs}
+              </strong>
+            </div>
+
+            <div>
+              <span className="dashboard__analytics-label">Active Jobs</span>
+              <strong className="dashboard__analytics-value">
+                {activeJobs}
+              </strong>
+            </div>
+          </div>
+
+          <div className="dashboard__analytics-list">
+            <AnalyticsCard
+              title="Interview Rate"
+              value={interviewRate}
+              suffix="%"
+            />
+
+            <AnalyticsCard title="Offer Rate" value={offerRate} suffix="%" />
+          </div>
+        </section>
         <section className="dashboard__jobs">
           <h2 className="dashboard__section-title">Recent Applications</h2>
 
