@@ -12,6 +12,8 @@ import {
 } from "../../services/jobsApi";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
+import Select from "../../components/ui/Select/Select";
+import { filterOptions, sortOptions } from "../../utils/selectOptions";
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import { SearchX } from "lucide-react";
 import "./Dashboard.css";
@@ -25,6 +27,8 @@ function Dashboard() {
   const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isViewJobModalOpen, setIsViewJobModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("Newest");
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -118,13 +122,32 @@ function Dashboard() {
       });
   };
 
-  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
-
-  const filteredJobs = jobs.filter((job) =>
-    `${job.title} ${job.company} ${job.location}`
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch = `${job.title} ${job.company} ${job.location}`
       .toLowerCase()
-      .includes(normalizedSearchTerm),
-  );
+      .includes(searchTerm.toLowerCase());
+
+    const matchesStatus = statusFilter === "All" || job.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const sortedJobs = [...filteredJobs].sort((a, b) => {
+    switch (sortBy) {
+      case "Oldest":
+        return new Date(a.appliedDate) - new Date(b.appliedDate);
+
+      case "Company":
+        return a.company.localeCompare(b.company);
+
+      case "Title":
+        return a.title.localeCompare(b.title);
+
+      case "Newest":
+      default:
+        return new Date(b.appliedDate) - new Date(a.appliedDate);
+    }
+  });
 
   const appliedJobs = jobs.filter((job) => job.status === "Applied").length;
 
@@ -159,6 +182,23 @@ function Dashboard() {
 
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
+          <div className="dashboard__filters">
+            <Select
+              label="Filter"
+              name="statusFilter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={filterOptions}
+            />
+
+            <Select
+              label="Sort By"
+              name="sortBy"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              options={sortOptions}
+            />
+          </div>
           {isLoading ? (
             <p className="dashboard__loading">Loading jobs...</p>
           ) : error ? (
@@ -180,9 +220,9 @@ function Dashboard() {
                 Add your first job application to get started.
               </p>
             </div>
-          ) : filteredJobs.length > 0 ? (
+          ) : sortedJobs.length > 0 ? (
             <div className="dashboard__job-list">
-              {filteredJobs.map((job) => (
+              {sortedJobs.map((job) => (
                 <JobCard
                   key={job._id}
                   job={job}

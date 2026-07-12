@@ -3,6 +3,7 @@ import Button from "../../ui/Button/Button";
 import Input from "../../ui/Input/Input";
 import Select from "../../ui/Select/Select";
 import Textarea from "../../ui/Textarea/Textarea";
+import { statusOptions } from "../../../utils/selectOptions";
 import "./JobForm.css";
 
 const defaultInitialValues = {
@@ -13,15 +14,6 @@ const defaultInitialValues = {
   appliedDate: new Date().toISOString().split("T")[0],
   notes: "",
 };
-
-const statusOptions = [
-  { value: "", label: "Select status" },
-  { value: "Saved", label: "Saved" },
-  { value: "Applied", label: "Applied" },
-  { value: "Interview", label: "Interview" },
-  { value: "Offer", label: "Offer" },
-  { value: "Rejected", label: "Rejected" },
-];
 
 function JobForm({
   initialValues = defaultInitialValues,
