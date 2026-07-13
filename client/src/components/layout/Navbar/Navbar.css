@@ -38,3 +38,13 @@
   font-weight: 600;
   color: #111827;
 }
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__user-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
