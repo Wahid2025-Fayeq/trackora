@@ -4,7 +4,7 @@ const BASE_URL = "http://localhost:3001";
 const USE_MOCK_API = false;
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwt");
 
   return {
     "Content-Type": "application/json",
