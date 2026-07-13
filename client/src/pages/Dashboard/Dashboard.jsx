@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
-import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
-import Container from "../../components/ui/Container";
-import Button from "../../components/ui/Button/Button";
-import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
-import JobCard from "../../components/common/JobCard";
-import { getJobAnalytics } from "../../utils/jobAnalytics";
-import {
-  getJobs,
-  createJob,
-  updateJob,
-  deleteJob,
-} from "../../services/jobsApi";
-import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
-import StatsCard from "../../components/common/StatsCard/StatsCard";
-import SearchBar from "../../components/common/SearchBar/SearchBar";
-import Select from "../../components/ui/Select/Select";
-import { filterOptions, sortOptions } from "../../utils/selectOptions";
-import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import { SearchX } from "lucide-react";
+
+import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
+import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
+import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
+import JobCard from "../../components/common/JobCard";
+import SearchBar from "../../components/common/SearchBar/SearchBar";
+import StatsCard from "../../components/common/StatsCard/StatsCard";
+import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
+import Button from "../../components/ui/Button/Button";
+import Container from "../../components/ui/Container";
+import Select from "../../components/ui/Select/Select";
+
+import {
+  createJob,
+  deleteJob,
+  getJobs,
+  updateJob,
+} from "../../services/jobsApi";
+import { getJobAnalytics } from "../../utils/jobAnalytics";
+import { filterOptions, sortOptions } from "../../utils/selectOptions";
+
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -25,10 +28,12 @@ function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
   const [isViewJobModalOpen, setIsViewJobModalOpen] = useState(false);
+
+  const [selectedJob, setSelectedJob] = useState(null);
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
 
@@ -40,9 +45,16 @@ function Dashboard() {
       .then((jobsData) => {
         setJobs(jobsData);
       })
-      .catch((error) => {
-        console.error("Failed to load jobs:", error);
+      .catch((requestError) => {
+        console.error("Failed to load jobs:", requestError);
         setJobs([]);
+
+        if (requestError.status === 401) {
+          localStorage.removeItem("token");
+          setError("Your session has expired. Please sign in again.");
+          return;
+        }
+
         setError("Unable to load jobs. Please try again.");
       })
       .finally(() => {
@@ -58,6 +70,10 @@ function Dashboard() {
     setIsAddJobModalOpen(true);
   };
 
+  const handleCloseAddJobModal = () => {
+    setIsAddJobModalOpen(false);
+  };
+
   const handleViewJobClick = (job) => {
     setSelectedJob(job);
     setIsViewJobModalOpen(true);
@@ -66,10 +82,6 @@ function Dashboard() {
   const handleCloseViewJobModal = () => {
     setIsViewJobModalOpen(false);
     setSelectedJob(null);
-  };
-
-  const handleCloseAddJobModal = () => {
-    setIsAddJobModalOpen(false);
   };
 
   const handleEditJobClick = (job) => {
@@ -85,24 +97,24 @@ function Dashboard() {
   const handleAddJob = (newJob) => {
     return createJob(newJob)
       .then((createdJob) => {
-        setJobs((prevJobs) => [createdJob, ...prevJobs]);
+        setJobs((currentJobs) => [createdJob, ...currentJobs]);
       })
-      .catch((error) => {
-        console.error("Failed to add job:", error);
-        throw error;
+      .catch((requestError) => {
+        console.error("Failed to add job:", requestError);
+        throw requestError;
       });
   };
 
   const handleUpdateJob = (updatedJob) => {
     return updateJob(updatedJob._id, updatedJob)
       .then((savedJob) => {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
+        setJobs((currentJobs) =>
+          currentJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
         );
       })
-      .catch((error) => {
-        console.error("Failed to update job:", error);
-        throw error;
+      .catch((requestError) => {
+        console.error("Failed to update job:", requestError);
+        throw requestError;
       });
   };
 
@@ -117,17 +129,26 @@ function Dashboard() {
 
     deleteJob(jobId)
       .then(() => {
-        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+        setJobs((currentJobs) =>
+          currentJobs.filter((job) => job._id !== jobId),
+        );
       })
-      .catch((error) => {
-        console.error("Failed to delete job:", error);
+      .catch((requestError) => {
+        console.error("Failed to delete job:", requestError);
+
+        if (requestError.status === 401) {
+          localStorage.removeItem("token");
+          setError("Your session has expired. Please sign in again.");
+        }
       });
   };
 
   const filteredJobs = jobs.filter((job) => {
+    const normalizedSearchTerm = searchTerm.toLowerCase();
+
     const matchesSearch = `${job.title} ${job.company} ${job.location}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .includes(normalizedSearchTerm);
 
     const matchesStatus = statusFilter === "All" || job.status === statusFilter;
 
@@ -181,12 +202,14 @@ function Dashboard() {
           <StatsCard title="Saved" value={savedJobs} />
           <StatsCard title="Offer" value={offerJobs} />
         </section>
+
         <section className="dashboard__analytics">
           <h2 className="dashboard__section-title">Job Search Analytics</h2>
 
           <div className="dashboard__analytics-summary">
             <div>
               <span className="dashboard__analytics-label">Total Jobs</span>
+
               <strong className="dashboard__analytics-value">
                 {totalJobs}
               </strong>
@@ -194,6 +217,7 @@ function Dashboard() {
 
             <div>
               <span className="dashboard__analytics-label">Active Jobs</span>
+
               <strong className="dashboard__analytics-value">
                 {activeJobs}
               </strong>
@@ -210,6 +234,7 @@ function Dashboard() {
             <AnalyticsCard title="Offer Rate" value={offerRate} suffix="%" />
           </div>
         </section>
+
         <section className="dashboard__jobs">
           <h2 className="dashboard__section-title">Recent Applications</h2>
 
@@ -220,7 +245,7 @@ function Dashboard() {
               label="Filter"
               name="statusFilter"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(event) => setStatusFilter(event.target.value)}
               options={filterOptions}
             />
 
@@ -228,10 +253,11 @@ function Dashboard() {
               label="Sort By"
               name="sortBy"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(event) => setSortBy(event.target.value)}
               options={sortOptions}
             />
           </div>
+
           {isLoading ? (
             <p className="dashboard__loading">Loading jobs...</p>
           ) : error ? (
@@ -272,7 +298,7 @@ function Dashboard() {
               <h3 className="dashboard__empty-title">No matching jobs</h3>
 
               <p className="dashboard__empty-text">
-                Try a different job title, company, or location.
+                Try a different job title, company, location, or filter.
               </p>
             </div>
           )}
@@ -291,6 +317,7 @@ function Dashboard() {
         job={selectedJob}
         onUpdateJob={handleUpdateJob}
       />
+
       <ViewJobModal
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}

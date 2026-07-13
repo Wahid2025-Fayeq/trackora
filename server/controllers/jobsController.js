@@ -1,73 +1,69 @@
 const Job = require("../models/Job");
+const { NotFoundError } = require("../utils/errors");
 
-const getJobs = async (req, res) => {
+const getJobs = async (req, res, next) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 });
+    const jobs = await Job.find({ owner: req.user.id }).sort({
+      createdAt: -1,
+    });
 
     return res.json(jobs);
   } catch (error) {
-    console.error("Error fetching jobs:", error);
-
-    return res.status(500).json({
-      message: "Failed to fetch jobs",
-    });
+    return next(error);
   }
 };
 
-const createJob = async (req, res) => {
+const createJob = async (req, res, next) => {
   try {
-    const newJob = await Job.create(req.body);
+    const newJob = await Job.create({
+      ...req.body,
+      owner: req.user.id,
+    });
 
     return res.status(201).json(newJob);
   } catch (error) {
-    console.error("Error creating job:", error);
-
-    return res.status(400).json({
-      message: "Failed to create job",
-    });
+    return next(error);
   }
 };
 
-const updateJob = async (req, res) => {
+const updateJob = async (req, res, next) => {
   try {
-    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedJob = await Job.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        owner: req.user.id,
+      },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
 
     if (!updatedJob) {
-      return res.status(404).json({
-        message: "Job not found",
-      });
+      throw new NotFoundError("Job not found");
     }
 
     return res.json(updatedJob);
   } catch (error) {
-    console.error("Error updating job:", error);
-
-    return res.status(400).json({
-      message: "Failed to update job",
-    });
+    return next(error);
   }
 };
 
-const deleteJob = async (req, res) => {
+const deleteJob = async (req, res, next) => {
   try {
-    const deletedJob = await Job.findByIdAndDelete(req.params.id);
+    const deletedJob = await Job.findOneAndDelete({
+      _id: req.params.id,
+      owner: req.user.id,
+    });
 
     if (!deletedJob) {
-      return res.status(404).json({
-        message: "Job not found",
-      });
+      throw new NotFoundError("Job not found");
     }
 
     return res.json(deletedJob);
   } catch (error) {
-    console.error("Error deleting job:", error);
-
-    return res.status(400).json({
-      message: "Failed to delete job",
-    });
+    return next(error);
   }
 };
 
