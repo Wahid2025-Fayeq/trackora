@@ -74,6 +74,7 @@ function Register() {
             value={formData.name}
             onChange={handleChange}
             disabled={isSubmitting}
+            autoComplete="name"
           />
 
           <Input
@@ -84,6 +85,7 @@ function Register() {
             value={formData.email}
             onChange={handleChange}
             disabled={isSubmitting}
+            autoComplete="email"
           />
 
           <Input
@@ -94,21 +96,25 @@ function Register() {
             value={formData.password}
             onChange={handleChange}
             disabled={isSubmitting}
+            autoComplete="new-password"
           />
 
           {error && <p className="register__error">{error}</p>}
 
           <Button
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isSubmitting}
             isLoading={isSubmitting}
             loadingText="Creating account..."
           >
             Create Account
           </Button>
 
-          <p className="register__login">
-            Already have an account? <Link to="/login">Sign in</Link>
+          <p className="register__footer">
+            Already have an account?{" "}
+            <Link to="/login" className="register__link">
+              Sign In
+            </Link>
           </p>
         </form>
       </Container>

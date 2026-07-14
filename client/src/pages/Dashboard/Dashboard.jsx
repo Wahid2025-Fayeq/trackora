@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { SearchX } from "lucide-react";
+import toast from "react-hot-toast";
 
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
+import DeleteConfirmationModal from "../../components/common/DeleteConfirmationModal/DeleteConfirmationModal";
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import JobCard from "../../components/common/JobCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
@@ -32,10 +34,14 @@ function Dashboard() {
   const [isAddJobModalOpen, setIsAddJobModalOpen] = useState(false);
   const [isEditJobModalOpen, setIsEditJobModalOpen] = useState(false);
   const [isViewJobModalOpen, setIsViewJobModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [selectedJob, setSelectedJob] = useState(null);
+  const [jobToDelete, setJobToDelete] = useState(null);
+
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -50,12 +56,14 @@ function Dashboard() {
         setJobs([]);
 
         if (requestError.status === 401) {
-          localStorage.removeItem("token");
+          localStorage.removeItem("jwt");
           setError("Your session has expired. Please sign in again.");
+          toast.error("Your session has expired");
           return;
         }
 
         setError("Unable to load jobs. Please try again.");
+        toast.error("Unable to load jobs");
       })
       .finally(() => {
         setIsLoading(false);
@@ -98,9 +106,11 @@ function Dashboard() {
     return createJob(newJob)
       .then((createdJob) => {
         setJobs((currentJobs) => [createdJob, ...currentJobs]);
+        toast.success(`"${createdJob.title}" added successfully`);
       })
       .catch((requestError) => {
         console.error("Failed to add job:", requestError);
+        toast.error(requestError.message || "Unable to add job");
         throw requestError;
       });
   };
@@ -111,36 +121,69 @@ function Dashboard() {
         setJobs((currentJobs) =>
           currentJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
         );
+
+        toast.success(`"${savedJob.title}" updated successfully`);
       })
       .catch((requestError) => {
         console.error("Failed to update job:", requestError);
+        toast.error(requestError.message || "Unable to update job");
         throw requestError;
       });
   };
 
   const handleDeleteJob = (jobId) => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this job?",
-    );
+    const selectedJobToDelete = jobs.find((job) => job._id === jobId);
 
-    if (!isConfirmed) {
+    if (!selectedJobToDelete) {
+      toast.error("Unable to find this job");
       return;
     }
 
-    deleteJob(jobId)
-      .then(() => {
-        setJobs((currentJobs) =>
-          currentJobs.filter((job) => job._id !== jobId),
-        );
-      })
-      .catch((requestError) => {
-        console.error("Failed to delete job:", requestError);
+    setJobToDelete(selectedJobToDelete);
+    setIsDeleteModalOpen(true);
+  };
 
-        if (requestError.status === 401) {
-          localStorage.removeItem("token");
-          setError("Your session has expired. Please sign in again.");
-        }
-      });
+  const handleCloseDeleteModal = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleteModalOpen(false);
+    setJobToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!jobToDelete || isDeleting) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      await deleteJob(jobToDelete._id);
+
+      setJobs((currentJobs) =>
+        currentJobs.filter((job) => job._id !== jobToDelete._id),
+      );
+
+      toast.success(`"${jobToDelete.title}" deleted successfully`);
+
+      setIsDeleteModalOpen(false);
+      setJobToDelete(null);
+    } catch (requestError) {
+      console.error("Failed to delete job:", requestError);
+
+      if (requestError.status === 401) {
+        localStorage.removeItem("jwt");
+        setError("Your session has expired. Please sign in again.");
+        toast.error("Your session has expired");
+        return;
+      }
+
+      toast.error(requestError.message || "Unable to delete job");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const filteredJobs = jobs.filter((job) => {
@@ -322,6 +365,14 @@ function Dashboard() {
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        jobTitle={jobToDelete?.title}
+        isDeleting={isDeleting}
       />
     </main>
   );

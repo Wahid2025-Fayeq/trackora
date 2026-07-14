@@ -6,6 +6,7 @@
 }
 
 .login__form {
+  width: 100%;
   max-width: 420px;
   margin: 0 auto;
   display: flex;
@@ -14,13 +15,34 @@
 }
 
 .login__title {
-  margin: 0;
+  margin: 0 0 8px;
   text-align: center;
   font-size: 32px;
 }
+
+.login__form button {
+  width: 100%;
+}
+
 .login__error {
   margin: 0;
   color: #dc2626;
   font-size: 14px;
   text-align: center;
+}
+.login__footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.login__link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login__link:hover {
+  text-decoration: underline;
 }

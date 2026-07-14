@@ -36,20 +36,21 @@ function AuthProvider({ children }) {
   const login = async (credentials) => {
     const response = await loginRequest(credentials);
 
-    const { token } = response;
+    const { token, user } = response;
 
     if (!token) {
       throw new Error("The server did not return a token");
     }
 
+    if (!user) {
+      throw new Error("The server did not return user information");
+    }
+
     localStorage.setItem("jwt", token);
-
-    const userData = await getCurrentUser(token);
-
-    setCurrentUser(userData);
+    setCurrentUser(user);
     setIsLoggedIn(true);
 
-    return userData;
+    return user;
   };
 
   const logout = () => {

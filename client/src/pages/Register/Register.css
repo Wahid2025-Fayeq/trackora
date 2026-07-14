@@ -41,3 +41,19 @@
 .register__login a:hover {
   text-decoration: underline;
 }
+.register__footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.register__link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register__link:hover {
+  text-decoration: underline;
+}

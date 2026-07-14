@@ -1,0 +1,41 @@
+.close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.close-button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.close-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.close-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

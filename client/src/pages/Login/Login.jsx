@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Container from "../../components/ui/Container";
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
@@ -54,7 +54,7 @@ function Login() {
   return (
     <main className="login">
       <Container>
-        <form className="login__form" onSubmit={handleSubmit}>
+        <form className="login__form" onSubmit={handleSubmit} autoComplete="on">
           <h1 className="login__title">Welcome Back</h1>
 
           <Input
@@ -65,6 +65,7 @@ function Login() {
             value={formData.email}
             onChange={handleChange}
             disabled={isSubmitting}
+            autoComplete="email"
           />
 
           <Input
@@ -75,18 +76,26 @@ function Login() {
             value={formData.password}
             onChange={handleChange}
             disabled={isSubmitting}
+            autoComplete="current-password"
           />
 
           {error && <p className="login__error">{error}</p>}
 
           <Button
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isSubmitting}
             isLoading={isSubmitting}
             loadingText="Signing in..."
           >
             Sign In
           </Button>
+
+          <p className="login__footer">
+            Don't have an account?{" "}
+            <Link to="/register" className="login__link">
+              Create one
+            </Link>
+          </p>
         </form>
       </Container>
     </main>

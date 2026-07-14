@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { statusConfig } from "../../../utils/statusConfig";
 import formatDate from "../../../utils/formatDate";
+import CloseButton from "../../ui/CloseButton/CloseButton";
 import "./ViewJobModal.css";
 
 function ViewJobModal({ isOpen, onClose, job }) {
@@ -44,19 +45,23 @@ function ViewJobModal({ isOpen, onClose, job }) {
   const StatusIcon = currentStatus?.icon;
 
   return (
-    <div className="view-job-modal" onClick={handleOverlayClick}>
-      <div className="view-job-modal__content">
-        <button
-          className="view-job-modal__close"
-          type="button"
-          onClick={onClose}
-          aria-label="Close job details"
-        >
-          ×
-        </button>
+    <div
+      className="view-job-modal"
+      onClick={handleOverlayClick}
+      role="presentation"
+    >
+      <div
+        className="view-job-modal__content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="view-job-modal-title"
+      >
+        <CloseButton onClick={onClose} />
 
         <header className="view-job-modal__header">
-          <h2 className="view-job-modal__title">{job.title}</h2>
+          <h2 id="view-job-modal-title" className="view-job-modal__title">
+            {job.title}
+          </h2>
           <p className="view-job-modal__company">{job.company}</p>
         </header>
 

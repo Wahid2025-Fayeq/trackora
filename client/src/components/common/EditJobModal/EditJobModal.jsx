@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import JobForm from "../JobForm/JobForm";
+import CloseButton from "../../ui/CloseButton/CloseButton";
 import "./EditJobModal.css";
 
 function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
@@ -63,14 +64,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
         className="edit-job-modal__content"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          className="edit-job-modal__close"
-          type="button"
-          onClick={onClose}
-          disabled={isSubmitting}
-        >
-          ×
-        </button>
+        <CloseButton onClick={onClose} disabled={isSubmitting} />
 
         <h2 className="edit-job-modal__title">Edit Job</h2>
 
