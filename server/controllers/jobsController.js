@@ -28,12 +28,29 @@ const createJob = async (req, res, next) => {
 
 const updateJob = async (req, res, next) => {
   try {
+    const allowedUpdates = [
+      "title",
+      "company",
+      "location",
+      "status",
+      "appliedDate",
+      "notes",
+    ];
+
+    const updates = {};
+
+    allowedUpdates.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
     const updatedJob = await Job.findOneAndUpdate(
       {
         _id: req.params.id,
         owner: req.user.id,
       },
-      req.body,
+      updates,
       {
         new: true,
         runValidators: true,
