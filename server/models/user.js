@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
         message: "Invalid email address",
       },
     },
+
+    avatar: {
+      type: String,
+      default: "",
+    },
+
     password: {
       type: String,
       required: true,
