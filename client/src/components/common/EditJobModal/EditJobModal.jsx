@@ -63,10 +63,15 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
       <div
         className="edit-job-modal__content"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-job-modal-title"
       >
         <CloseButton onClick={onClose} disabled={isSubmitting} />
 
-        <h2 className="edit-job-modal__title">Edit Job</h2>
+        <h2 className="edit-job-modal__title" id="edit-job-modal-title">
+          Edit Job
+        </h2>
 
         <JobForm
           initialValues={job}

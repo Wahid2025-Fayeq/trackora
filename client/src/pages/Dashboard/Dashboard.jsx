@@ -12,6 +12,8 @@ import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
+import Loader from "../../components/ui/Loader/Loader";
+import useAuth from "../../hooks/useAuth";
 import Select from "../../components/ui/Select/Select";
 
 import {
@@ -86,6 +88,8 @@ function Dashboard() {
     setSelectedJob(job);
     setIsViewJobModalOpen(true);
   };
+
+  const { currentUser } = useAuth();
 
   const handleCloseViewJobModal = () => {
     setIsViewJobModalOpen(false);
@@ -230,7 +234,9 @@ function Dashboard() {
     <main className="dashboard">
       <Container>
         <section className="dashboard__header">
-          <h1 className="dashboard__title">Welcome back, Wahid</h1>
+          <h1 className="dashboard__title">
+            Welcome back, {currentUser?.name || "User"}
+          </h1>
 
           <p className="dashboard__subtitle">
             Track your applications, interviews, and saved jobs in one place.
@@ -302,7 +308,7 @@ function Dashboard() {
           </div>
 
           {isLoading ? (
-            <p className="dashboard__loading">Loading jobs...</p>
+            <Loader text="Loading jobs..." />
           ) : error ? (
             <div className="dashboard__error">
               <h3>Something went wrong</h3>

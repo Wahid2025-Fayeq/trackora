@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import AuthContext from "../context/AuthContext";
-import { getCurrentUser, login as loginRequest } from "../services/authApi";
+
 import Loader from "../components/ui/Loader/Loader";
+import AuthContext from "../context/AuthContext";
+import {
+  getCurrentUser,
+  login as loginRequest,
+  updateCurrentUser,
+} from "../services/authApi";
 
 function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -35,7 +40,6 @@ function AuthProvider({ children }) {
 
   const login = async (credentials) => {
     const response = await loginRequest(credentials);
-
     const { token, user } = response;
 
     if (!token) {
@@ -53,6 +57,20 @@ function AuthProvider({ children }) {
     return user;
   };
 
+  const updateProfile = async (profileData) => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) {
+      throw new Error("You are not signed in");
+    }
+
+    const updatedUser = await updateCurrentUser(token, profileData);
+
+    setCurrentUser(updatedUser);
+
+    return updatedUser;
+  };
+
   const logout = () => {
     localStorage.removeItem("jwt");
     setCurrentUser(null);
@@ -64,6 +82,7 @@ function AuthProvider({ children }) {
     isLoggedIn,
     login,
     logout,
+    updateProfile,
   };
 
   if (isCheckingToken) {

@@ -7,6 +7,9 @@ import PublicRoute from "./components/common/PublicRoute/PublicRoute";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
+import Profile from "./pages/Profile/Profile";
+import Settings from "./pages/Settings/Settings";
+import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
   return (
@@ -40,6 +43,23 @@ function App() {
             </PublicRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Toaster
