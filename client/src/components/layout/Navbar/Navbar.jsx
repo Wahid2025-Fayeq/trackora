@@ -96,8 +96,18 @@ function Navbar() {
                 aria-expanded={isUserMenuOpen}
                 aria-controls="navbar-user-dropdown"
               >
-                <span className="navbar__avatar" aria-hidden="true">
-                  {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                <span className="navbar__avatar">
+                  {currentUser?.avatar ? (
+                    <img
+                      className="navbar__avatar-image"
+                      src={currentUser.avatar}
+                      alt=""
+                    />
+                  ) : (
+                    <span aria-hidden="true">
+                      {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  )}
                 </span>
 
                 <span className="navbar__user-name">

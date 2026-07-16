@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "duplicates": "jscpd src"
+    "duplicates": "jscpd src",
+    "test": "vitest --run"
   },
   "dependencies": {
     "lucide-react": "^1.23.0",
@@ -18,11 +19,15 @@
     "react-router-dom": "^7.18.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "jscpd": "^5.0.12",
+    "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "vitest": "^4.1.10"
   }
 }

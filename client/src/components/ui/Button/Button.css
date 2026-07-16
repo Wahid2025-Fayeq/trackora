@@ -2,6 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -13,8 +14,6 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* Variants */
 
 .button--primary {
   background-color: #2563eb;

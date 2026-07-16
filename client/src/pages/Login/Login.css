@@ -20,7 +20,7 @@
   font-size: 32px;
 }
 
-.login__form button {
+.login__form .button {
   width: 100%;
 }
 

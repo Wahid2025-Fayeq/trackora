@@ -63,3 +63,19 @@ export function updateCurrentUser(token, { name }) {
     body: JSON.stringify({ name }),
   }).then(checkResponse);
 }
+
+export const uploadAvatar = async (token, file) => {
+  const formData = new FormData();
+
+  formData.append("avatar", file);
+
+  const response = await fetch("http://localhost:3001/users/me/avatar", {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  return checkResponse(response);
+};

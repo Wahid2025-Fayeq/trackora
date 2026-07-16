@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 
 import Loader from "../components/ui/Loader/Loader";
 import AuthContext from "../context/AuthContext";
+
 import {
   getCurrentUser,
   login as loginRequest,
   updateCurrentUser,
+  uploadAvatar,
 } from "../services/authApi";
 
 function AuthProvider({ children }) {
@@ -71,6 +73,20 @@ function AuthProvider({ children }) {
     return updatedUser;
   };
 
+  const uploadProfileAvatar = async (file) => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) {
+      throw new Error("You are not signed in");
+    }
+
+    const updatedUser = await uploadAvatar(token, file);
+
+    setCurrentUser(updatedUser);
+
+    return updatedUser;
+  };
+
   const logout = () => {
     localStorage.removeItem("jwt");
     setCurrentUser(null);
@@ -83,6 +99,7 @@ function AuthProvider({ children }) {
     login,
     logout,
     updateProfile,
+    uploadProfileAvatar,
   };
 
   if (isCheckingToken) {

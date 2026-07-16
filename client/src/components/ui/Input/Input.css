@@ -12,6 +12,24 @@
   color: #374151;
 }
 
+.input__wrapper {
+  width: 100%;
+}
+
+.input__wrapper_password {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.input__wrapper_password:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 .input__field {
   width: 100%;
   height: 44px;
@@ -26,9 +44,55 @@
   outline: none;
 }
 
+.input__wrapper_password .input__field {
+  padding-right: 48px;
+}
+
+.input__wrapper_password .input__field {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.input__wrapper_password .input__field:focus {
+  border: none;
+  box-shadow: none;
+}
+
 .input__field:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.input__toggle {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.input__toggle:hover:not(:disabled) {
+  color: #111827;
+}
+
+.input__toggle:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -4px;
+  border-radius: 6px;
+}
+
+.input__toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .input__error {
