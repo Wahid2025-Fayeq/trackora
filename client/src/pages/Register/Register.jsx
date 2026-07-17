@@ -18,18 +18,23 @@ const PASSWORD_REQUIREMENTS = {
   hasSpecialCharacter: /[^A-Za-z0-9]/,
 };
 
+const USERNAME_PATTERN = /^[a-z0-9_]{3,20}$/;
+
 function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
+    username: "",
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const normalizedUsername = formData.username.trim().toLowerCase();
   const normalizedEmail = formData.email.trim().toLowerCase();
 
   const passwordChecks = {
@@ -43,10 +48,16 @@ function Register() {
   };
 
   const isPasswordValid = Object.values(passwordChecks).every(Boolean);
+
+  const isUsernameValid = USERNAME_PATTERN.test(normalizedUsername);
+
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
 
   const isFormValid =
-    formData.name.trim() !== "" && isEmailValid && isPasswordValid;
+    formData.name.trim() !== "" &&
+    isUsernameValid &&
+    isEmailValid &&
+    isPasswordValid;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -72,12 +83,13 @@ function Register() {
     try {
       await register({
         name: formData.name.trim(),
+        username: normalizedUsername,
         email: normalizedEmail,
         password: formData.password,
       });
 
       await login({
-        email: normalizedEmail,
+        identifier: normalizedUsername,
         password: formData.password,
       });
 
@@ -104,6 +116,23 @@ function Register() {
             disabled={isSubmitting}
             autoComplete="name"
           />
+
+          <Input
+            label="Username"
+            name="username"
+            placeholder="Choose a username"
+            value={formData.username}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            autoComplete="username"
+          />
+
+          {formData.username.length > 0 && !isUsernameValid && (
+            <p className="register__error">
+              Username must be 3–20 characters and contain only lowercase
+              letters, numbers, or underscores.
+            </p>
+          )}
 
           <Input
             label="Email"

@@ -18,7 +18,7 @@ function checkResponse(res) {
   });
 }
 
-export function register({ name, email, password }) {
+export function register({ name, username, email, password }) {
   return fetch(`${BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -26,20 +26,21 @@ export function register({ name, email, password }) {
     },
     body: JSON.stringify({
       name,
+      username,
       email,
       password,
     }),
   }).then(checkResponse);
 }
 
-export function login({ email, password }) {
+export function login({ identifier, password }) {
   return fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email,
+      identifier,
       password,
     }),
   }).then(checkResponse);
@@ -69,7 +70,7 @@ export const uploadAvatar = async (token, file) => {
 
   formData.append("avatar", file);
 
-  const response = await fetch("http://localhost:3001/users/me/avatar", {
+  const response = await fetch(`${BASE_URL}/users/me/avatar`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -79,3 +80,23 @@ export const uploadAvatar = async (token, file) => {
 
   return checkResponse(response);
 };
+
+export function forgotPassword(email) {
+  return fetch(`${BASE_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  }).then(checkResponse);
+}
+
+export function resetPassword(token, password) {
+  return fetch(`${BASE_URL}/auth/reset-password/${token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ password }),
+  }).then(checkResponse);
+}

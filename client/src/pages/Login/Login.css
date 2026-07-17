@@ -46,3 +46,9 @@
 .login__link:hover {
   text-decoration: underline;
 }
+
+.login__forgot-password {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}

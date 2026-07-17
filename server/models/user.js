@@ -10,6 +10,15 @@ const userSchema = new mongoose.Schema(
       maxlength: 30,
       trim: true,
     },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 20,
+    },
     email: {
       type: String,
       required: true,
@@ -43,6 +52,15 @@ const userSchema = new mongoose.Schema(
         message:
           "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.",
       },
+      select: false,
+    },
+
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
       select: false,
     },
   },

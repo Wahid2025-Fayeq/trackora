@@ -11,7 +11,7 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
+    identifier: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -29,7 +29,7 @@ function Login() {
   };
 
   const isFormValid =
-    formData.email.trim() !== "" && formData.password.trim() !== "";
+    formData.identifier.trim() !== "" && formData.password.trim() !== "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +42,11 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      await login(formData);
+      await login({
+        identifier: formData.identifier.trim().toLowerCase(),
+        password: formData.password,
+      });
+
       navigate("/");
     } catch (err) {
       setError(err.message || "Unable to sign in");
@@ -58,14 +62,14 @@ function Login() {
           <h1 className="login__title">Welcome Back</h1>
 
           <Input
-            label="Email"
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
+            label="Email or Username"
+            type="text"
+            name="identifier"
+            placeholder="Enter your email or username"
+            value={formData.identifier}
             onChange={handleChange}
             disabled={isSubmitting}
-            autoComplete="email"
+            autoComplete="username"
           />
 
           <Input
@@ -78,6 +82,12 @@ function Login() {
             disabled={isSubmitting}
             autoComplete="current-password"
           />
+
+          <div className="login__forgot-password">
+            <Link to="/forgot-password" className="login__link">
+              Forgot password?
+            </Link>
+          </div>
 
           {error && <p className="login__error">{error}</p>}
 
