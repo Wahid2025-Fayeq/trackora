@@ -13,6 +13,13 @@ const defaultInitialValues = {
   status: "",
   appliedDate: new Date().toISOString().split("T")[0],
   notes: "",
+  interview: {
+    date: "",
+    type: "",
+    location: "",
+    meetingLink: "",
+    notes: "",
+  },
 };
 
 function JobForm({
@@ -21,10 +28,20 @@ function JobForm({
   submitButtonText = "Save",
   isSubmitting = false,
 }) {
-  const [formData, setFormData] = useState(initialValues);
+  const [formData, setFormData] = useState(defaultInitialValues);
 
   useEffect(() => {
-    setFormData(initialValues);
+    setFormData({
+      ...defaultInitialValues,
+      ...initialValues,
+      interview: {
+        ...defaultInitialValues.interview,
+        ...initialValues.interview,
+        date: initialValues.interview?.date
+          ? new Date(initialValues.interview.date).toISOString().slice(0, 16)
+          : "",
+      },
+    });
   }, [initialValues]);
 
   const handleChange = (e) => {
@@ -36,12 +53,28 @@ function JobForm({
     }));
   };
 
+  const handleInterviewChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      interview: {
+        ...prevData.interview,
+        [name]: value,
+      },
+    }));
+  };
+
+  const isInterviewStatus = formData.status === "Interview";
+
   const isFormValid =
     formData.title.trim() &&
     formData.company.trim() &&
     formData.location.trim() &&
     formData.status &&
-    formData.appliedDate;
+    formData.appliedDate &&
+    (!isInterviewStatus ||
+      (formData.interview.date && formData.interview.type));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,7 +83,23 @@ function JobForm({
       return;
     }
 
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      interview: isInterviewStatus
+        ? {
+            ...formData.interview,
+            date: formData.interview.date
+              ? new Date(formData.interview.date).toISOString()
+              : null,
+          }
+        : {
+            date: null,
+            type: "",
+            location: "",
+            meetingLink: "",
+            notes: "",
+          },
+    });
   };
 
   return (
@@ -81,6 +130,7 @@ function JobForm({
         disabled={isSubmitting}
         placeholder="Arlington, VA"
       />
+
       <Input
         label="Application Date"
         type="date"
@@ -89,6 +139,7 @@ function JobForm({
         onChange={handleChange}
         disabled={isSubmitting}
       />
+
       <Select
         label="Status"
         name="status"
@@ -97,19 +148,77 @@ function JobForm({
         options={statusOptions}
         disabled={isSubmitting}
       />
+
+      {isInterviewStatus && (
+        <section className="job-form__interview">
+          <h3 className="job-form__section-title">Interview Details</h3>
+
+          <Input
+            label="Interview Date and Time"
+            type="datetime-local"
+            name="date"
+            value={formData.interview.date}
+            onChange={handleInterviewChange}
+            disabled={isSubmitting}
+          />
+
+          <Select
+            label="Interview Type"
+            name="type"
+            value={formData.interview.type}
+            onChange={handleInterviewChange}
+            options={[
+              { value: "", label: "Select interview type" },
+              { value: "Phone", label: "Phone" },
+              { value: "Video", label: "Video" },
+              { value: "On-site", label: "On-site" },
+            ]}
+            disabled={isSubmitting}
+          />
+
+          <Input
+            label="Interview Location"
+            name="location"
+            value={formData.interview.location}
+            onChange={handleInterviewChange}
+            placeholder="Arlington, VA"
+            disabled={isSubmitting}
+          />
+
+          <Input
+            label="Meeting Link"
+            type="url"
+            name="meetingLink"
+            value={formData.interview.meetingLink}
+            onChange={handleInterviewChange}
+            placeholder="https://meet.google.com/..."
+            disabled={isSubmitting}
+          />
+
+          <Textarea
+            label="Interview Notes"
+            name="notes"
+            value={formData.interview.notes}
+            onChange={handleInterviewChange}
+            placeholder="Interviewers, preparation topics, questions..."
+            disabled={isSubmitting}
+          />
+        </section>
+      )}
+
       <Textarea
-        label="Notes"
+        label="General Notes"
         name="notes"
         value={formData.notes}
         onChange={handleChange}
         placeholder={`Recruiter:
 Salary:
-Interview Date:
 Follow-up Date:
 Job URL:
 Notes:`}
         disabled={isSubmitting}
       />
+
       <Button
         type="submit"
         variant="primary"

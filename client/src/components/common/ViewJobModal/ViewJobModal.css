@@ -13,6 +13,8 @@
   position: relative;
   width: 100%;
   max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 32px;
   border-radius: 12px;
   background-color: #ffffff;
@@ -128,4 +130,74 @@
   color: #4b5563;
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+.view-job-modal__interview {
+  padding: 20px;
+  margin-top: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface-secondary);
+}
+
+.view-job-modal__section-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.view-job-modal__interview-list {
+  display: grid;
+  gap: 16px;
+}
+
+.view-job-modal__interview-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.view-job-modal__interview-item svg {
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
+.view-job-modal__interview-item p {
+  margin: 4px 0 0;
+}
+
+.view-job-modal__meeting-link {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.view-job-modal__meeting-link:hover {
+  text-decoration: underline;
+}
+
+.view-job-modal__interview-notes {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+.view-job-modal__interview-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.view-job-modal__meeting-link {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
 }

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { CalendarDays, MapPin, Video, Link as LinkIcon } from "lucide-react";
 import { statusConfig } from "../../../utils/statusConfig";
 import formatDate from "../../../utils/formatDate";
 import CloseButton from "../../ui/CloseButton/CloseButton";
@@ -43,6 +44,27 @@ function ViewJobModal({ isOpen, onClose, job }) {
 
   const currentStatus = statusConfig[job.status];
   const StatusIcon = currentStatus?.icon;
+
+  const hasInterviewDetails =
+    job.interview?.date ||
+    job.interview?.type ||
+    job.interview?.location ||
+    job.interview?.meetingLink ||
+    job.interview?.notes;
+
+  const formattedInterviewDate = job.interview?.date
+    ? new Intl.DateTimeFormat("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(job.interview.date))
+    : "";
+
+  const meetingLink = job.interview?.meetingLink
+    ? job.interview.meetingLink.startsWith("http://") ||
+      job.interview.meetingLink.startsWith("https://")
+      ? job.interview.meetingLink
+      : `https://${job.interview.meetingLink}`
+    : "";
 
   return (
     <div
@@ -90,8 +112,86 @@ function ViewJobModal({ isOpen, onClose, job }) {
           </div>
         </div>
 
+        {hasInterviewDetails && (
+          <section className="view-job-modal__interview">
+            <h3 className="view-job-modal__section-title">Interview Details</h3>
+
+            <div className="view-job-modal__interview-list">
+              {job.interview.date && (
+                <div className="view-job-modal__interview-item">
+                  <CalendarDays size={18} aria-hidden="true" />
+
+                  <div>
+                    <span className="view-job-modal__label">Date and Time</span>
+                    <p className="view-job-modal__value">
+                      {formattedInterviewDate}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {job.interview.type && (
+                <div className="view-job-modal__interview-item">
+                  <Video size={18} aria-hidden="true" />
+
+                  <div>
+                    <span className="view-job-modal__label">Type</span>
+                    <p className="view-job-modal__value">
+                      {job.interview.type}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {job.interview.location && (
+                <div className="view-job-modal__interview-item">
+                  <MapPin size={18} aria-hidden="true" />
+
+                  <div>
+                    <span className="view-job-modal__label">
+                      Interview Location
+                    </span>
+                    <p className="view-job-modal__value">
+                      {job.interview.location}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {job.interview.meetingLink && (
+                <div className="view-job-modal__interview-item">
+                  <LinkIcon size={18} aria-hidden="true" />
+
+                  <div className="view-job-modal__interview-content">
+                    <span className="view-job-modal__label">Meeting Link</span>
+
+                    <a
+                      className="view-job-modal__meeting-link"
+                      href={meetingLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Join interview
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {job.interview.notes && (
+              <div className="view-job-modal__interview-notes">
+                <span className="view-job-modal__label">Interview Notes</span>
+
+                <p className="view-job-modal__notes-text">
+                  {job.interview.notes}
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
         <section className="view-job-modal__notes">
-          <h3 className="view-job-modal__notes-title">Notes</h3>
+          <h3 className="view-job-modal__section-title">General Notes</h3>
 
           <p className="view-job-modal__notes-text">
             {job.notes || "No notes added for this job."}

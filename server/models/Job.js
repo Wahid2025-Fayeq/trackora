@@ -31,6 +31,32 @@ const jobSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    interview: {
+      date: {
+        type: Date,
+        default: null,
+      },
+      type: {
+        type: String,
+        enum: ["Phone", "Video", "On-site", ""],
+        default: "",
+      },
+      location: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      meetingLink: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      notes: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

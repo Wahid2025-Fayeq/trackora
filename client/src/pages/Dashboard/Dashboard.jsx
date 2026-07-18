@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SearchX } from "lucide-react";
+import { CalendarDays, MapPin, SearchX, Video } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
@@ -10,13 +10,15 @@ import JobCard from "../../components/common/JobCard";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
+import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
+import StatusChart from "../../components/common/StatusChart/StatusChart";
+
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
-import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import Loader from "../../components/ui/Loader/Loader";
-import useAuth from "../../hooks/useAuth";
 import Select from "../../components/ui/Select/Select";
-import StatusChart from "../../components/common/StatusChart/StatusChart";
+
+import useAuth from "../../hooks/useAuth";
 
 import {
   createJob,
@@ -24,16 +26,80 @@ import {
   getJobs,
   updateJob,
 } from "../../services/jobsApi";
+
 import {
   getJobAnalytics,
-  getStatusChartData,
   getMonthlyApplicationsData,
+  getStatusChartData,
 } from "../../utils/jobAnalytics";
+
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
 
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
+const getMeetingLink = (meetingLink) => {
+  if (!meetingLink) {
+    return "";
+  }
+
+  return meetingLink.startsWith("http://") || meetingLink.startsWith("https://")
+    ? meetingLink
+    : `https://${meetingLink}`;
+};
+
+const getInterviewCountdown = (date) => {
+  const interviewDate = new Date(date);
+
+  if (Number.isNaN(interviewDate.getTime())) {
+    return "Date unavailable";
+  }
+
+  const now = new Date();
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const interviewDay = new Date(
+    interviewDate.getFullYear(),
+    interviewDate.getMonth(),
+    interviewDate.getDate(),
+  );
+
+  const daysAway = Math.round(
+    (interviewDay.getTime() - today.getTime()) / MILLISECONDS_PER_DAY,
+  );
+
+  const formattedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(interviewDate);
+
+  if (daysAway === 0) {
+    return `Today • ${formattedTime}`;
+  }
+
+  if (daysAway === 1) {
+    return `Tomorrow • ${formattedTime}`;
+  }
+
+  if (daysAway > 1 && daysAway < 7) {
+    return `In ${daysAway} days • ${formattedTime}`;
+  }
+
+  if (daysAway >= 7 && daysAway < 14) {
+    return `Next week • ${formattedTime}`;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(interviewDate);
+};
+
 function Dashboard() {
+  const { currentUser } = useAuth();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,8 +160,6 @@ function Dashboard() {
     setSelectedJob(job);
     setIsViewJobModalOpen(true);
   };
-
-  const { currentUser } = useAuth();
 
   const handleCloseViewJobModal = () => {
     setIsViewJobModalOpen(false);
@@ -239,6 +303,26 @@ function Dashboard() {
   const statusChartData = getStatusChartData(jobs);
   const monthlyApplicationsData = getMonthlyApplicationsData(jobs);
 
+  const upcomingInterviews = jobs
+    .filter((job) => {
+      if (job.status !== "Interview" || !job.interview?.date) {
+        return false;
+      }
+
+      const interviewDate = new Date(job.interview.date);
+
+      return (
+        !Number.isNaN(interviewDate.getTime()) &&
+        interviewDate.getTime() >= Date.now()
+      );
+    })
+    .sort(
+      (a, b) =>
+        new Date(a.interview.date).getTime() -
+        new Date(b.interview.date).getTime(),
+    )
+    .slice(0, 3);
+
   return (
     <main className="dashboard">
       <Container>
@@ -306,6 +390,92 @@ function Dashboard() {
           </section>
         </section>
 
+        <section className="dashboard__upcoming">
+          <div className="dashboard__section-header">
+            <h2 className="dashboard__section-title">Upcoming Interviews</h2>
+
+            <p className="dashboard__section-description">
+              Your next scheduled interviews.
+            </p>
+          </div>
+
+          {upcomingInterviews.length > 0 ? (
+            <div className="dashboard__upcoming-list">
+              {upcomingInterviews.map((job) => (
+                <article key={job._id} className="dashboard__upcoming-card">
+                  <div className="dashboard__upcoming-info">
+                    <div>
+                      <h3 className="dashboard__upcoming-company">
+                        {job.company}
+                      </h3>
+
+                      <p className="dashboard__upcoming-title">{job.title}</p>
+                    </div>
+
+                    <div className="dashboard__upcoming-details">
+                      <div className="dashboard__upcoming-detail">
+                        <CalendarDays size={17} aria-hidden="true" />
+
+                        <time dateTime={job.interview.date}>
+                          {getInterviewCountdown(job.interview.date)}
+                        </time>
+                      </div>
+
+                      {job.interview.type && (
+                        <div className="dashboard__upcoming-detail">
+                          <Video size={17} aria-hidden="true" />
+                          <span>{job.interview.type}</span>
+                        </div>
+                      )}
+
+                      {job.interview.location && (
+                        <div className="dashboard__upcoming-detail">
+                          <MapPin size={17} aria-hidden="true" />
+                          <span>{job.interview.location}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="dashboard__upcoming-actions">
+                    <Button
+                      size="small"
+                      variant="secondary"
+                      onClick={() => handleViewJobClick(job)}
+                    >
+                      View
+                    </Button>
+
+                    {job.interview.meetingLink && (
+                      <a
+                        className="dashboard__join-button"
+                        href={getMeetingLink(job.interview.meetingLink)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Join
+                      </a>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard__upcoming-empty">
+              <CalendarDays size={28} aria-hidden="true" />
+
+              <div>
+                <h3>No upcoming interviews</h3>
+
+                <p>
+                  Interview details will appear here after you schedule an
+                  interview.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+
         <section className="dashboard__jobs">
           <h2 className="dashboard__section-title">Recent Applications</h2>
 
@@ -342,7 +512,11 @@ function Dashboard() {
             </div>
           ) : jobs.length === 0 ? (
             <div className="dashboard__empty-state">
-              <SearchX className="dashboard__empty-icon" size={40} />
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
 
               <h3 className="dashboard__empty-title">No jobs yet</h3>
 
@@ -364,7 +538,11 @@ function Dashboard() {
             </div>
           ) : (
             <div className="dashboard__empty-state">
-              <SearchX className="dashboard__empty-icon" size={40} />
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
 
               <h3 className="dashboard__empty-title">No matching jobs</h3>
 
