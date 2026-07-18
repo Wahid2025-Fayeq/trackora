@@ -135,6 +135,29 @@
   margin-top: 16px;
 }
 
+.dashboard__charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.dashboard__section-header {
+  margin-top: 32px;
+}
+
+.dashboard__section-description {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+@media screen and (max-width: 900px) {
+  .dashboard__charts {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media screen and (max-width: 900px) {
   .dashboard__stats {
     grid-template-columns: repeat(2, 1fr);

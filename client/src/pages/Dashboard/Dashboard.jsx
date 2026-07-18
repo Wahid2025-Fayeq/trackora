@@ -12,9 +12,11 @@ import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
+import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import Loader from "../../components/ui/Loader/Loader";
 import useAuth from "../../hooks/useAuth";
 import Select from "../../components/ui/Select/Select";
+import StatusChart from "../../components/common/StatusChart/StatusChart";
 
 import {
   createJob,
@@ -22,7 +24,11 @@ import {
   getJobs,
   updateJob,
 } from "../../services/jobsApi";
-import { getJobAnalytics } from "../../utils/jobAnalytics";
+import {
+  getJobAnalytics,
+  getStatusChartData,
+  getMonthlyApplicationsData,
+} from "../../utils/jobAnalytics";
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
@@ -230,6 +236,9 @@ function Dashboard() {
     offerRate,
   } = getJobAnalytics(jobs);
 
+  const statusChartData = getStatusChartData(jobs);
+  const monthlyApplicationsData = getMonthlyApplicationsData(jobs);
+
   return (
     <main className="dashboard">
       <Container>
@@ -282,6 +291,19 @@ function Dashboard() {
 
             <AnalyticsCard title="Offer Rate" value={offerRate} suffix="%" />
           </div>
+
+          <div className="dashboard__section-header">
+            <h2 className="dashboard__section-title">Visual Insights</h2>
+
+            <p className="dashboard__section-description">
+              Understand your application progress with interactive charts.
+            </p>
+          </div>
+
+          <section className="dashboard__charts">
+            <StatusChart data={statusChartData} />
+            <MonthlyApplicationsChart data={monthlyApplicationsData} />
+          </section>
         </section>
 
         <section className="dashboard__jobs">

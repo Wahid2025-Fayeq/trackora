@@ -30,3 +30,74 @@ export function getJobAnalytics(jobs) {
     activeJobs,
   };
 }
+
+export function getStatusChartData(jobs) {
+  const { appliedJobs, interviewJobs, savedJobs, offerJobs, rejectedJobs } =
+    getJobAnalytics(jobs);
+
+  return [
+    {
+      name: "Applied",
+      value: appliedJobs,
+    },
+    {
+      name: "Interview",
+      value: interviewJobs,
+    },
+    {
+      name: "Saved",
+      value: savedJobs,
+    },
+    {
+      name: "Offer",
+      value: offerJobs,
+    },
+    {
+      name: "Rejected",
+      value: rejectedJobs,
+    },
+  ];
+}
+
+export function getMonthlyApplicationsData(jobs) {
+  const monthlyTotals = jobs.reduce((totals, job) => {
+    if (!job.appliedDate) {
+      return totals;
+    }
+
+    const appliedDate = new Date(job.appliedDate);
+
+    if (Number.isNaN(appliedDate.getTime())) {
+      return totals;
+    }
+
+    const monthKey = `${appliedDate.getFullYear()}-${String(
+      appliedDate.getMonth() + 1,
+    ).padStart(2, "0")}`;
+
+    totals[monthKey] = (totals[monthKey] || 0) + 1;
+
+    return totals;
+  }, {});
+
+  return Object.entries(monthlyTotals)
+    .sort(([firstMonth], [secondMonth]) =>
+      firstMonth.localeCompare(secondMonth),
+    )
+    .map(([monthKey, applications]) => {
+      const [year, month] = monthKey.split("-");
+
+      const monthLabel = new Date(
+        Number(year),
+        Number(month) - 1,
+      ).toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
+
+      return {
+        month: monthLabel,
+        applications,
+      };
+    });
+}
