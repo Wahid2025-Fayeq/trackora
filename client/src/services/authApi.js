@@ -54,14 +54,30 @@ export function getCurrentUser(token) {
   }).then(checkResponse);
 }
 
-export function updateCurrentUser(token, { name }) {
+export function updateCurrentUser(token, { name, email }) {
   return fetch(`${BASE_URL}/users/me`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({
+      name,
+      email,
+    }),
+  }).then(checkResponse);
+}
+
+export function updatePreferences(token, preferences) {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      preferences,
+    }),
   }).then(checkResponse);
 }
 
@@ -100,3 +116,19 @@ export function resetPassword(token, password) {
     body: JSON.stringify({ password }),
   }).then(checkResponse);
 }
+
+export const changePassword = ({ currentPassword, newPassword }) => {
+  const token = localStorage.getItem("jwt");
+
+  return fetch(`${BASE_URL}/users/me/password`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  }).then(checkResponse);
+};

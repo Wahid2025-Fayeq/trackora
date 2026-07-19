@@ -1,3 +1,5 @@
+import ReactSelect from "react-select";
+
 import "./Select.css";
 
 function Select({
@@ -9,6 +11,24 @@ function Select({
   disabled = false,
   required = false,
 }) {
+  const placeholderOption = options.find((option) => option.value === "");
+
+  const selectableOptions = options.filter((option) => option.value !== "");
+
+  const selectedOption =
+    value === ""
+      ? null
+      : selectableOptions.find((option) => option.value === value) || null;
+
+  const handleChange = (selectedOptionValue) => {
+    onChange({
+      target: {
+        name,
+        value: selectedOptionValue?.value || "",
+      },
+    });
+  };
+
   return (
     <div className="select">
       {label && (
@@ -17,25 +37,42 @@ function Select({
         </label>
       )}
 
-      <select
-        className="select__field"
-        id={name}
+      <ReactSelect
+        inputId={name}
         name={name}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        required={required}
-      >
-        {options.map((option) => (
-          <option
-            key={option.value}
-            value={option.value}
-            disabled={option.value === ""}
-          >
-            {option.label}
-          </option>
-        ))}
-      </select>
+        value={selectedOption}
+        onChange={handleChange}
+        options={selectableOptions}
+        placeholder={placeholderOption?.label || "Select an option"}
+        isDisabled={disabled}
+        isSearchable={false}
+        isClearable={false}
+        className="select__component"
+        classNamePrefix="trackora-select"
+        menuPortalTarget={document.body}
+        menuPosition="fixed"
+        maxMenuHeight={220}
+        aria-required={required}
+        styles={{
+          menuPortal: (baseStyles) => ({
+            ...baseStyles,
+            zIndex: 9999,
+          }),
+          menu: (baseStyles) => ({
+            ...baseStyles,
+            backgroundColor: "#ffffff",
+            zIndex: 9999,
+          }),
+          menuList: (baseStyles) => ({
+            ...baseStyles,
+            backgroundColor: "#ffffff",
+          }),
+          option: (baseStyles) => ({
+            ...baseStyles,
+            backgroundColor: "#ffffff",
+          }),
+        }}
+      />
     </div>
   );
 }

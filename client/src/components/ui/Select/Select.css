@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 .select__label {
@@ -10,24 +12,78 @@
   color: var(--color-text);
 }
 
-.select__field {
+.select__component {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  cursor: pointer;
-  outline: none;
 }
 
-.select__field:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+.trackora-select__control {
+  min-height: 44px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px !important;
+  background-color: #fff !important;
+  box-shadow: none !important;
 }
 
-.select__field:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+.trackora-select__control:hover {
+  border-color: var(--color-border) !important;
+}
+
+.trackora-select__control--is-focused {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.trackora-select__value-container {
+  padding: 2px 12px !important;
+}
+
+.trackora-select__single-value {
+  color: var(--color-text) !important;
+  font-size: 14px;
+}
+
+.trackora-select__placeholder {
+  color: #64748b !important;
+  font-size: 14px;
+}
+
+.trackora-select__indicator-separator {
+  display: none;
+}
+
+.trackora-select__dropdown-indicator {
+  padding: 8px 10px !important;
+}
+
+.trackora-select__menu {
+  overflow: hidden;
+  margin-top: 4px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px !important;
+  background-color: #fff !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12) !important;
+  z-index: 9999 !important;
+}
+
+.trackora-select__menu-list {
+  padding: 4px !important;
+  background-color: #fff !important;
+}
+
+.trackora-select__option {
+  padding: 10px 12px !important;
+  border-radius: 6px;
+  background-color: #fff !important;
+  color: var(--color-text) !important;
+  font-size: 14px;
+  cursor: pointer !important;
+}
+
+.trackora-select__option--is-focused {
+  background-color: #eff6ff !important;
+}
+
+.trackora-select__option--is-selected {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
 }

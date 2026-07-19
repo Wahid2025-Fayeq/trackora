@@ -1,11 +1,70 @@
+const bcrypt = require("bcryptjs");
+
 const User = require("../models/user");
 const uploadToCloudinary = require("../utils/uploadToCloudinary");
+
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Current password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        message: "New password must be at least 8 characters",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Current password is incorrect",
+      });
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        message: "New password must be different from current password",
+      });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const serializeUser = (user) => ({
   id: user._id,
   name: user.name,
+  username: user.username,
   email: user.email,
   avatar: user.avatar,
+  preferences: user.preferences,
 });
 
 const getCurrentUser = async (req, res, next) => {
@@ -26,7 +85,7 @@ const getCurrentUser = async (req, res, next) => {
 
 const updateCurrentUser = async (req, res, next) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, preferences } = req.body;
 
     const normalizedEmail =
       email !== undefined ? email.trim().toLowerCase() : undefined;
@@ -52,6 +111,26 @@ const updateCurrentUser = async (req, res, next) => {
 
     if (normalizedEmail !== undefined) {
       updates.email = normalizedEmail;
+    }
+
+    if (preferences !== undefined) {
+      const { theme, defaultStatus, defaultSort, dateFormat } = preferences;
+
+      if (theme !== undefined) {
+        updates["preferences.theme"] = theme;
+      }
+
+      if (defaultStatus !== undefined) {
+        updates["preferences.defaultStatus"] = defaultStatus;
+      }
+
+      if (defaultSort !== undefined) {
+        updates["preferences.defaultSort"] = defaultSort;
+      }
+
+      if (dateFormat !== undefined) {
+        updates["preferences.dateFormat"] = dateFormat;
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, {
@@ -92,9 +171,15 @@ const uploadAvatar = async (req, res, next) => {
       },
     );
 
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
     return res.status(200).json(serializeUser(updatedUser));
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -102,4 +187,5 @@ module.exports = {
   getCurrentUser,
   updateCurrentUser,
   uploadAvatar,
+  changePassword,
 };

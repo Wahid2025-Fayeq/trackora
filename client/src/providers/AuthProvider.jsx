@@ -7,6 +7,7 @@ import {
   getCurrentUser,
   login as loginRequest,
   updateCurrentUser,
+  updatePreferences as updatePreferencesRequest,
   uploadAvatar,
 } from "../services/authApi";
 
@@ -73,6 +74,20 @@ function AuthProvider({ children }) {
     return updatedUser;
   };
 
+  const savePreferences = async (preferences) => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) {
+      throw new Error("You are not signed in");
+    }
+
+    const updatedUser = await updatePreferencesRequest(token, preferences);
+
+    setCurrentUser(updatedUser);
+
+    return updatedUser;
+  };
+
   const uploadProfileAvatar = async (file) => {
     const token = localStorage.getItem("jwt");
 
@@ -99,6 +114,7 @@ function AuthProvider({ children }) {
     login,
     logout,
     updateProfile,
+    savePreferences,
     uploadProfileAvatar,
   };
 

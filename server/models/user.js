@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
       maxlength: 30,
       trim: true,
     },
+
     username: {
       type: String,
       required: true,
@@ -19,6 +20,7 @@ const userSchema = new mongoose.Schema(
       minlength: 3,
       maxlength: 20,
     },
+
     email: {
       type: String,
       required: true,
@@ -34,6 +36,32 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       default: "",
+    },
+
+    preferences: {
+      theme: {
+        type: String,
+        enum: ["light", "dark", "system"],
+        default: "system",
+      },
+
+      defaultStatus: {
+        type: String,
+        enum: ["Saved", "Applied", "Interview", "Offer", "Rejected"],
+        default: "Applied",
+      },
+
+      defaultSort: {
+        type: String,
+        enum: ["newest", "oldest", "company", "title"],
+        default: "newest",
+      },
+
+      dateFormat: {
+        type: String,
+        enum: ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"],
+        default: "MM/DD/YYYY",
+      },
     },
 
     password: {
@@ -59,6 +87,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+
     resetPasswordExpires: {
       type: Date,
       select: false,

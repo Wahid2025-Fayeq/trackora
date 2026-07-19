@@ -26,6 +26,7 @@
 .status-chart__container {
   width: 100%;
   height: 320px;
+  min-width: 0;
 }
 
 .status-chart__empty {
@@ -68,6 +69,7 @@
 }
 
 .status-chart__legend-dot {
+  flex-shrink: 0;
   width: 9px;
   height: 9px;
   border-radius: 50%;
@@ -75,16 +77,41 @@
 
 @media screen and (max-width: 600px) {
   .status-chart {
-    padding: 18px;
+    padding: 16px;
   }
 
-  .status-chart__container,
+  .status-chart__header {
+    margin-bottom: 10px;
+  }
+
+  .status-chart__container {
+    height: 250px;
+  }
+
   .status-chart__empty {
-    height: 280px;
-    min-height: 280px;
+    min-height: 250px;
+    padding: 16px;
   }
 
   .status-chart__total {
-    font-size: 26px;
+    font-size: 24px;
+  }
+
+  .status-chart__total-label {
+    font-size: 11px;
+  }
+
+  .status-chart__legend {
+    gap: 6px 10px;
+  }
+
+  .status-chart__legend-item {
+    gap: 4px;
+    font-size: 10px;
+  }
+
+  .status-chart__legend-dot {
+    width: 7px;
+    height: 7px;
   }
 }

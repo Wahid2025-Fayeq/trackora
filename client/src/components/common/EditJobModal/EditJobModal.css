@@ -17,10 +17,9 @@
   max-height: min(90vh, 800px);
   overflow-y: auto;
   padding: 32px;
-  scrollbar-gutter: stable;
-  -webkit-overflow-scrolling: touch;
   border-radius: 16px;
   background-color: #ffffff;
+  -webkit-overflow-scrolling: touch;
 }
 
 .edit-job-modal__close {
@@ -40,10 +39,12 @@
 
 @media (max-width: 600px) {
   .edit-job-modal {
+    align-items: flex-start;
     padding: 16px;
   }
 
   .edit-job-modal__content {
+    max-height: calc(100vh - 32px);
     padding: 24px 16px;
   }
 }

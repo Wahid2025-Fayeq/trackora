@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Cell,
   Legend,
@@ -18,14 +19,32 @@ const STATUS_COLORS = {
 };
 
 function StatusChart({ data }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 600px)");
+
+    const handleChange = (event) => {
+      setIsMobile(event.matches);
+    };
+
+    setIsMobile(mediaQuery.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
   const visibleData = data.filter((item) => item.value > 0);
 
   const totalJobs = visibleData.reduce((total, item) => total + item.value, 0);
 
-  const renderLegend = ({ payload }) => (
+  const renderLegend = ({ payload = [] }) => (
     <ul className="status-chart__legend">
       {payload.map((entry) => (
-        <li className="status-chart__legend-item" key={entry.value}>
+        <li className="status-chart__legend-item" key={entry.payload.name}>
           <span
             className="status-chart__legend-dot"
             style={{ backgroundColor: entry.color }}
@@ -38,6 +57,10 @@ function StatusChart({ data }) {
       ))}
     </ul>
   );
+
+  const chartCenterY = isMobile ? "39%" : "41%";
+  const totalY = isMobile ? "37%" : "39%";
+  const labelY = isMobile ? "45%" : "47%";
 
   return (
     <article className="status-chart">
@@ -62,9 +85,9 @@ function StatusChart({ data }) {
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
-                cy="41%"
-                innerRadius={78}
-                outerRadius={118}
+                cy={chartCenterY}
+                innerRadius={isMobile ? 48 : 78}
+                outerRadius={isMobile ? 72 : 118}
                 paddingAngle={3}
                 stroke="none"
                 animationDuration={900}
@@ -79,7 +102,7 @@ function StatusChart({ data }) {
 
               <text
                 x="50%"
-                y="39%"
+                y={totalY}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className="status-chart__total"
@@ -89,7 +112,7 @@ function StatusChart({ data }) {
 
               <text
                 x="50%"
-                y="47%"
+                y={labelY}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className="status-chart__total-label"

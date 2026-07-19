@@ -28,6 +28,72 @@
   font-size: 17px;
 }
 
+.settings__preferences {
+  max-width: 760px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.settings__section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.settings__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.settings__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings__label {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.settings__select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #111827;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings__select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.settings__select:disabled {
+  color: #9ca3af;
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.settings__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
 .settings__card {
   max-width: 760px;
   overflow: hidden;
@@ -96,6 +162,30 @@
   font-weight: 700;
 }
 
+.settings__item_button {
+  width: 100%;
+  border: none;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.settings__item_button:hover {
+  background-color: var(--color-background);
+}
+
+.settings__item_button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.2);
+  outline-offset: -3px;
+}
+
+@media screen and (max-width: 700px) {
+  .settings__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .settings {
     padding: 32px 0;
@@ -103,6 +193,22 @@
 
   .settings__title {
     font-size: 30px;
+  }
+
+  .settings__preferences {
+    padding: 20px;
+  }
+
+  .settings__section-heading {
+    margin-bottom: 20px;
+  }
+
+  .settings__actions {
+    justify-content: stretch;
+  }
+
+  .settings__actions button {
+    width: 100%;
   }
 
   .settings__item {

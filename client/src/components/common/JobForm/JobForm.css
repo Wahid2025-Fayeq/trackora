@@ -18,8 +18,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px;
   margin-top: 8px;
+  padding: 20px;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background-color: var(--color-surface-secondary);
@@ -30,4 +30,107 @@
   font-size: 18px;
   font-weight: 700;
   color: var(--color-text);
+}
+
+.job-form__interview-datetime {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 16px;
+}
+
+.job-form__interview-datetime > * {
+  min-width: 0;
+}
+
+.job-form__datepicker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.job-form__datepicker-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.job-form__datepicker-input {
+  position: relative;
+  width: 100%;
+}
+
+.job-form__datepicker-wrapper {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.job-form__datepicker-wrapper input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 42px 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  background-color: #ffffff;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.job-form__datepicker-wrapper input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.job-form__datepicker-wrapper input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.job-form__datepicker-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.job-form__datepicker-popper {
+  z-index: 2000;
+}
+
+.job-form__calendar {
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-family: inherit;
+  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.18);
+}
+
+@media screen and (max-width: 600px) {
+  .job-form__interview {
+    padding: 16px;
+  }
+
+  .job-form__interview-datetime {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .job-form__datepicker-popper {
+    position: fixed !important;
+    inset: auto !important;
+    top: 38% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 3000;
+  }
 }
