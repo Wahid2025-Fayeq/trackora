@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../ui/Button/Button";
 import CloseButton from "../../ui/CloseButton/CloseButton";
 import "./DeleteConfirmationModal.css";
@@ -8,10 +8,22 @@ function DeleteConfirmationModal({
   onClose,
   onConfirm,
   jobTitle,
+  title = "Delete job?",
+  message,
+  confirmText = "Delete",
+  loadingText = "Deleting...",
+  confirmationText = "",
   isDeleting = false,
 }) {
+  const [confirmation, setConfirmation] = useState("");
+
+  const requiresConfirmation = Boolean(confirmationText);
+  const canConfirm =
+    !isDeleting && (!requiresConfirmation || confirmation === confirmationText);
+
   useEffect(() => {
     if (!isOpen) {
+      setConfirmation("");
       return;
     }
 
@@ -50,6 +62,21 @@ function DeleteConfirmationModal({
     }
   };
 
+  const handleConfirm = () => {
+    if (!canConfirm) {
+      return;
+    }
+
+    onConfirm(confirmation);
+  };
+
+  const defaultMessage = (
+    <>
+      Are you sure you want to delete <strong>{jobTitle || "this job"}</strong>?
+      This action cannot be undone.
+    </>
+  );
+
   return (
     <div
       className="delete-modal"
@@ -65,14 +92,31 @@ function DeleteConfirmationModal({
         <CloseButton onClick={onClose} disabled={isDeleting} />
 
         <h2 id="delete-modal-title" className="delete-modal__title">
-          Delete job?
+          {title}
         </h2>
 
-        <p className="delete-modal__text">
-          Are you sure you want to delete{" "}
-          <strong>{jobTitle || "this job"}</strong>? This action cannot be
-          undone.
-        </p>
+        <p className="delete-modal__text">{message || defaultMessage}</p>
+
+        {requiresConfirmation && (
+          <div className="delete-modal__confirmation">
+            <label
+              className="delete-modal__label"
+              htmlFor="delete-confirmation"
+            >
+              Type <strong>{confirmationText}</strong> to confirm
+            </label>
+
+            <input
+              id="delete-confirmation"
+              className="delete-modal__input"
+              type="text"
+              value={confirmation}
+              onChange={(event) => setConfirmation(event.target.value)}
+              disabled={isDeleting}
+              autoComplete="off"
+            />
+          </div>
+        )}
 
         <div className="delete-modal__actions">
           <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
@@ -81,11 +125,12 @@ function DeleteConfirmationModal({
 
           <Button
             variant="danger"
-            onClick={onConfirm}
+            onClick={handleConfirm}
             isLoading={isDeleting}
-            loadingText="Deleting..."
+            loadingText={loadingText}
+            disabled={!canConfirm}
           >
-            Delete
+            {confirmText}
           </Button>
         </div>
       </div>

@@ -7,9 +7,9 @@
 }
 
 .select__label {
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-text);
 }
 
 .select__component {
@@ -20,17 +20,23 @@
   min-height: 44px !important;
   border: 1px solid var(--color-border) !important;
   border-radius: 8px !important;
-  background-color: #fff !important;
+  background-color: var(--color-surface) !important;
   box-shadow: none !important;
 }
 
 .trackora-select__control:hover {
-  border-color: var(--color-border) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .trackora-select__control--is-focused {
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  box-shadow: 0 0 0 3px var(--color-focus-ring) !important;
+}
+
+.trackora-select__control--is-disabled {
+  background-color: var(--color-surface-secondary) !important;
+  opacity: 0.75;
+  cursor: not-allowed !important;
 }
 
 .trackora-select__value-container {
@@ -43,8 +49,12 @@
 }
 
 .trackora-select__placeholder {
-  color: #64748b !important;
+  color: var(--color-text-secondary) !important;
   font-size: 14px;
+}
+
+.trackora-select__input-container {
+  color: var(--color-text) !important;
 }
 
 .trackora-select__indicator-separator {
@@ -53,6 +63,11 @@
 
 .trackora-select__dropdown-indicator {
   padding: 8px 10px !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.trackora-select__dropdown-indicator:hover {
+  color: var(--color-text) !important;
 }
 
 .trackora-select__menu {
@@ -60,30 +75,36 @@
   margin-top: 4px !important;
   border: 1px solid var(--color-border) !important;
   border-radius: 8px !important;
-  background-color: #fff !important;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12) !important;
+  background-color: var(--color-surface) !important;
+  box-shadow: var(--shadow-card) !important;
   z-index: 9999 !important;
 }
 
 .trackora-select__menu-list {
   padding: 4px !important;
-  background-color: #fff !important;
+  background-color: var(--color-surface) !important;
 }
 
 .trackora-select__option {
   padding: 10px 12px !important;
   border-radius: 6px;
-  background-color: #fff !important;
+  background-color: var(--color-surface) !important;
   color: var(--color-text) !important;
   font-size: 14px;
   cursor: pointer !important;
 }
 
 .trackora-select__option--is-focused {
-  background-color: #eff6ff !important;
+  background-color: var(--color-surface-secondary) !important;
 }
 
 .trackora-select__option--is-selected {
   background-color: var(--color-primary) !important;
-  color: #fff !important;
+  color: var(--color-white) !important;
+}
+
+.trackora-select__option--is-disabled {
+  color: var(--color-text-secondary) !important;
+  opacity: 0.6;
+  cursor: not-allowed !important;
 }

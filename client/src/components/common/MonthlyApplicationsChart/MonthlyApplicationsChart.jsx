@@ -73,13 +73,13 @@ function MonthlyApplicationsChart({ data }) {
               />
 
               <Tooltip
-                cursor={{ fill: "rgba(37, 99, 235, 0.06)" }}
+                cursor={{ fill: "var(--color-surface-secondary)" }}
                 content={<MonthlyTooltip />}
               />
 
               <Bar
                 dataKey="applications"
-                fill="#2563eb"
+                fill="var(--color-primary)"
                 radius={[10, 10, 0, 0]}
                 maxBarSize={42}
                 animationDuration={900}

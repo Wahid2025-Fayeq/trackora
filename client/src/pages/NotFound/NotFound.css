@@ -11,7 +11,7 @@
 
 .not-found__code {
   display: block;
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 96px;
   font-weight: 700;
   line-height: 1;
@@ -19,14 +19,14 @@
 
 .not-found__title {
   margin: 20px 0 0;
-  color: #111827;
+  color: var(--color-text);
   font-size: 36px;
 }
 
 .not-found__text {
   max-width: 420px;
   margin: 18px auto 30px;
-  color: #6b7280;
+  color: var(--color-muted);
   line-height: 1.6;
 }
 

@@ -1,4 +1,4 @@
-const Job = require("../models/Job");
+const Job = require("../models/job");
 const { NotFoundError } = require("../utils/errors");
 
 const getJobs = async (req, res, next) => {

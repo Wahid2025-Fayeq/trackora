@@ -117,9 +117,7 @@ export function resetPassword(token, password) {
   }).then(checkResponse);
 }
 
-export const changePassword = ({ currentPassword, newPassword }) => {
-  const token = localStorage.getItem("jwt");
-
+export function changePassword(token, { currentPassword, newPassword }) {
   return fetch(`${BASE_URL}/users/me/password`, {
     method: "PATCH",
     headers: {
@@ -131,4 +129,17 @@ export const changePassword = ({ currentPassword, newPassword }) => {
       newPassword,
     }),
   }).then(checkResponse);
-};
+}
+
+export function deleteAccount(token, confirmation) {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      confirmation,
+    }),
+  }).then(checkResponse);
+}

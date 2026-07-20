@@ -6,7 +6,7 @@
 
 .job-form__select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .job-form__select:disabled {
@@ -27,9 +27,9 @@
 
 .job-form__section-title {
   margin: 0;
+  color: var(--color-text);
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-text);
 }
 
 .job-form__interview-datetime {
@@ -53,9 +53,9 @@
 }
 
 .job-form__datepicker-label {
+  color: var(--color-label);
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-text);
 }
 
 .job-form__datepicker-input {
@@ -74,19 +74,29 @@
   width: 100%;
   height: 44px;
   padding: 0 42px 0 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-input-border);
   border-radius: 8px;
   outline: none;
-  background-color: #ffffff;
+  background-color: var(--color-input-background);
   color: var(--color-text);
   font-family: inherit;
   font-size: 16px;
   cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.job-form__datepicker-wrapper input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.8;
 }
 
 .job-form__datepicker-wrapper input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .job-form__datepicker-wrapper input:disabled {
@@ -99,7 +109,7 @@
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: var(--color-text-secondary);
   pointer-events: none;
 }
 
@@ -109,10 +119,12 @@
 
 .job-form__calendar {
   overflow: hidden;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.18);
+  box-shadow: var(--shadow-card);
 }
 
 @media screen and (max-width: 600px) {
@@ -130,7 +142,7 @@
     inset: auto !important;
     top: 38% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
     z-index: 3000;
+    transform: translate(-50%, -50%) !important;
   }
 }

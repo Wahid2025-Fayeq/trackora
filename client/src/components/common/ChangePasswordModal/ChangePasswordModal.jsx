@@ -14,6 +14,9 @@ const initialFormData = {
   confirmPassword: "",
 };
 
+const passwordPattern =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
 function ChangePasswordModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
@@ -49,29 +52,95 @@ function ChangePasswordModal({ isOpen, onClose }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
+    const updatedFormData = {
+      ...formData,
       [name]: value,
-    }));
+    };
 
-    setErrors((previousErrors) => ({
-      ...previousErrors,
-      [name]: "",
-      form: "",
-    }));
+    setFormData(updatedFormData);
+
+    setErrors((previousErrors) => {
+      const nextErrors = {
+        ...previousErrors,
+        [name]: "",
+        form: "",
+      };
+
+      if (name === "newPassword") {
+        if (
+          value &&
+          updatedFormData.confirmPassword &&
+          value !== updatedFormData.confirmPassword
+        ) {
+          nextErrors.confirmPassword = "Passwords do not match";
+        } else if (
+          value &&
+          updatedFormData.confirmPassword &&
+          value === updatedFormData.confirmPassword
+        ) {
+          nextErrors.confirmPassword = "";
+        }
+
+        if (value && !passwordPattern.test(value)) {
+          nextErrors.newPassword =
+            "Password must contain at least 8 characters, uppercase, lowercase, number, and special character";
+        } else if (value && value === updatedFormData.currentPassword) {
+          nextErrors.newPassword =
+            "New password must be different from your current password";
+        } else {
+          nextErrors.newPassword = "";
+        }
+      }
+
+      if (name === "confirmPassword") {
+        if (value && value !== updatedFormData.newPassword) {
+          nextErrors.confirmPassword = "Passwords do not match";
+        } else {
+          nextErrors.confirmPassword = "";
+        }
+      }
+
+      if (name === "currentPassword") {
+        if (
+          updatedFormData.newPassword &&
+          value === updatedFormData.newPassword
+        ) {
+          nextErrors.newPassword =
+            "New password must be different from your current password";
+        } else if (
+          updatedFormData.newPassword &&
+          passwordPattern.test(updatedFormData.newPassword)
+        ) {
+          nextErrors.newPassword = "";
+        }
+      }
+
+      return nextErrors;
+    });
   };
+
+  const isFormValid =
+    formData.currentPassword.trim() !== "" &&
+    passwordPattern.test(formData.newPassword) &&
+    formData.confirmPassword.trim() !== "" &&
+    formData.newPassword === formData.confirmPassword &&
+    formData.newPassword !== formData.currentPassword;
 
   const validateForm = () => {
     const nextErrors = {};
 
-    if (!formData.currentPassword) {
+    if (!formData.currentPassword.trim()) {
       nextErrors.currentPassword = "Current password is required";
     }
 
     if (!formData.newPassword) {
       nextErrors.newPassword = "New password is required";
-    } else if (formData.newPassword.length < 8) {
-      nextErrors.newPassword = "New password must be at least 8 characters";
+    } else if (!passwordPattern.test(formData.newPassword)) {
+      nextErrors.newPassword =
+        "Password must contain at least 8 characters, uppercase, lowercase, number, and special character";
+    } else if (formData.newPassword === formData.currentPassword) {
+      nextErrors.newPassword =
+        "New password must be different from your current password";
     }
 
     if (!formData.confirmPassword) {
@@ -95,11 +164,19 @@ function ChangePasswordModal({ isOpen, onClose }) {
     setIsSubmitting(true);
 
     try {
-      await changePassword({
+      const token = localStorage.getItem("jwt");
+
+      if (!token) {
+        throw new Error("You are not signed in");
+      }
+
+      await changePassword(token, {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
       });
 
+      setFormData(initialFormData);
+      setErrors({});
       toast.success("Password changed successfully");
       onClose();
     } catch (error) {
@@ -200,8 +277,12 @@ function ChangePasswordModal({ isOpen, onClose }) {
               Cancel
             </Button>
 
-            <Button type="submit" isLoading={isSubmitting}>
-              Change password
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={!isFormValid || isSubmitting}
+            >
+              Change Password
             </Button>
           </div>
         </form>

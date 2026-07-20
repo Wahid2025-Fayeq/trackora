@@ -16,6 +16,7 @@
 
 .login__title {
   margin: 0 0 8px;
+  color: var(--color-text);
   text-align: center;
   font-size: 32px;
 }
@@ -26,15 +27,15 @@
 
 .login__error {
   margin: 0;
-  color: #dc2626;
+  color: var(--color-danger);
   font-size: 14px;
   text-align: center;
 }
 .login__footer {
   margin-top: 20px;
+  color: var(--color-text-secondary);
   text-align: center;
   font-size: 14px;
-  color: #6b7280;
 }
 
 .login__link {
@@ -51,4 +52,11 @@
   display: flex;
   justify-content: flex-end;
   margin-top: -4px;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.login__forgot-password a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
 }

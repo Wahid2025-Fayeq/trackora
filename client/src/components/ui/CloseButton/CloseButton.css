@@ -16,7 +16,7 @@
   border-radius: 50%;
 
   background: transparent;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 
   cursor: pointer;
 
@@ -27,8 +27,8 @@
 }
 
 .close-button:hover:not(:disabled) {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--color-surface-secondary);
+  color: var(--color-text);
 }
 
 .close-button:active:not(:disabled) {

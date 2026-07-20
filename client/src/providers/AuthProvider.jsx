@@ -4,6 +4,7 @@ import Loader from "../components/ui/Loader/Loader";
 import AuthContext from "../context/AuthContext";
 
 import {
+  deleteAccount as deleteAccountRequest,
   getCurrentUser,
   login as loginRequest,
   updateCurrentUser,
@@ -60,6 +61,40 @@ function AuthProvider({ children }) {
     return user;
   };
 
+  useEffect(() => {
+    const selectedTheme = currentUser?.preferences?.theme || "system";
+    const root = document.documentElement;
+
+    const applyTheme = () => {
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+
+      const resolvedTheme =
+        selectedTheme === "system"
+          ? systemPrefersDark
+            ? "dark"
+            : "light"
+          : selectedTheme;
+
+      root.dataset.theme = resolvedTheme;
+    };
+
+    applyTheme();
+
+    if (selectedTheme !== "system") {
+      return;
+    }
+
+    const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    systemThemeQuery.addEventListener("change", applyTheme);
+
+    return () => {
+      systemThemeQuery.removeEventListener("change", applyTheme);
+    };
+  }, [currentUser?.preferences?.theme]);
+
   const updateProfile = async (profileData) => {
     const token = localStorage.getItem("jwt");
 
@@ -102,6 +137,22 @@ function AuthProvider({ children }) {
     return updatedUser;
   };
 
+  const deleteAccount = async (confirmation) => {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) {
+      throw new Error("You are not signed in");
+    }
+
+    const response = await deleteAccountRequest(token, confirmation);
+
+    localStorage.removeItem("jwt");
+    setCurrentUser(null);
+    setIsLoggedIn(false);
+
+    return response;
+  };
+
   const logout = () => {
     localStorage.removeItem("jwt");
     setCurrentUser(null);
@@ -116,6 +167,7 @@ function AuthProvider({ children }) {
     updateProfile,
     savePreferences,
     uploadProfileAvatar,
+    deleteAccount,
   };
 
   if (isCheckingToken) {

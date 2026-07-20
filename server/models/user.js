@@ -62,6 +62,28 @@ const userSchema = new mongoose.Schema(
         enum: ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"],
         default: "MM/DD/YYYY",
       },
+
+      notifications: {
+        interviewReminders: {
+          type: Boolean,
+          default: true,
+        },
+
+        followUpReminders: {
+          type: Boolean,
+          default: true,
+        },
+
+        applicationUpdates: {
+          type: Boolean,
+          default: true,
+        },
+
+        emailNotifications: {
+          type: Boolean,
+          default: false,
+        },
+      },
     },
 
     password: {

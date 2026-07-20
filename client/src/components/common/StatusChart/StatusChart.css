@@ -1,10 +1,10 @@
 .status-chart {
   height: 100%;
   padding: 24px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background-color: #fff;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
 .status-chart__header {
@@ -20,7 +20,7 @@
 .status-chart__description {
   margin: 6px 0 0;
   font-size: 14px;
-  color: #64748b;
+  color: var(--color-text-secondary);
 }
 
 .status-chart__container {
@@ -36,7 +36,7 @@
   justify-content: center;
   padding: 24px;
   text-align: center;
-  color: #64748b;
+  color: var(--color-text-secondary);
 }
 
 .status-chart__total {
@@ -47,7 +47,7 @@
 
 .status-chart__total-label {
   font-size: 13px;
-  fill: #64748b;
+  fill: var(--color-text-secondary);
 }
 
 .status-chart__legend {
@@ -65,7 +65,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
 .status-chart__legend-dot {

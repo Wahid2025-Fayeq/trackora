@@ -60,16 +60,16 @@ function Select({
           }),
           menu: (baseStyles) => ({
             ...baseStyles,
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--color-surface)",
             zIndex: 9999,
           }),
           menuList: (baseStyles) => ({
             ...baseStyles,
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--color-surface)",
           }),
           option: (baseStyles) => ({
             ...baseStyles,
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--color-surface)",
           }),
         }}
       />

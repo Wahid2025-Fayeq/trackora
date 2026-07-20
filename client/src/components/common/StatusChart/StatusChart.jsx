@@ -95,7 +95,10 @@ function StatusChart({ data }) {
                 {visibleData.map((item) => (
                   <Cell
                     key={item.name}
-                    fill={STATUS_COLORS[item.name] || "#64748b"}
+                    fill={
+                      STATUS_COLORS[item.name] ||
+                      "var(--color-text-secondary)"
+                    }
                   />
                 ))}
               </Pie>
