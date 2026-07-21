@@ -1,19 +1,23 @@
 const cloudinary = require("../config/cloudinary");
 
-const uploadToCloudinary = (fileBuffer) =>
+const uploadToCloudinary = (
+  fileBuffer,
+  {
+    folder = "trackora/avatars",
+    resourceType = "image",
+    transformation,
+    useFilename = false,
+    uniqueFilename = true,
+  } = {},
+) =>
   new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: "trackora/avatars",
-        resource_type: "image",
-        transformation: [
-          {
-            width: 400,
-            height: 400,
-            crop: "fill",
-            gravity: "face",
-          },
-        ],
+        folder,
+        resource_type: resourceType,
+        use_filename: useFilename,
+        unique_filename: uniqueFilename,
+        ...(transformation && { transformation }),
       },
       (error, result) => {
         if (error) {

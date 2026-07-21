@@ -12,6 +12,14 @@ const getAuthHeaders = () => {
   };
 };
 
+const getFileAuthHeaders = () => {
+  const token = localStorage.getItem("jwt");
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+};
+
 const checkResponse = async (res) => {
   if (res.ok) {
     return res.json();
@@ -77,4 +85,66 @@ export const deleteJob = (jobId) => {
     method: "DELETE",
     headers: getAuthHeaders(),
   }).then(checkResponse);
+};
+
+export const getJobDocuments = (jobId) => {
+  return fetch(`${BASE_URL}/jobs/${jobId}/documents`, {
+    headers: getFileAuthHeaders(),
+  }).then(checkResponse);
+};
+
+export const uploadJobDocument = ({ jobId, document, documentType }) => {
+  const formData = new FormData();
+
+  formData.append("document", document);
+  formData.append("documentType", documentType);
+
+  return fetch(`${BASE_URL}/jobs/${jobId}/documents`, {
+    method: "POST",
+    headers: getFileAuthHeaders(),
+    body: formData,
+  }).then(checkResponse);
+};
+
+export const deleteJobDocument = ({ jobId, documentId }) => {
+  return fetch(`${BASE_URL}/jobs/${jobId}/documents/${documentId}`, {
+    method: "DELETE",
+    headers: getFileAuthHeaders(),
+  }).then(checkResponse);
+};
+
+export const downloadJobDocument = async ({
+  jobId,
+  documentId,
+  originalName,
+}) => {
+  const token = localStorage.getItem("jwt");
+
+  const response = await fetch(
+    `${BASE_URL}/jobs/${jobId}/documents/${documentId}/download`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+
+    throw new Error(data.message || "Unable to download the document.");
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = window.document.createElement("a");
+
+  link.href = objectUrl;
+  link.download = originalName;
+
+  window.document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(objectUrl);
 };

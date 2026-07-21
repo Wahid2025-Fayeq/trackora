@@ -1,5 +1,39 @@
 const mongoose = require("mongoose");
 
+const documentSchema = new mongoose.Schema(
+  {
+    documentType: {
+      type: String,
+      enum: ["Resume", "Cover Letter", "Job Description", "Other"],
+      required: true,
+    },
+    originalName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+    publicId: {
+      type: String,
+      required: true,
+    },
+    resourceType: {
+      type: String,
+      default: "raw",
+    },
+    uploadedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    _id: true,
+  },
+);
+
 const jobSchema = new mongoose.Schema(
   {
     title: {
@@ -56,6 +90,10 @@ const jobSchema = new mongoose.Schema(
         trim: true,
         default: "",
       },
+    },
+    documents: {
+      type: [documentSchema],
+      default: [],
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

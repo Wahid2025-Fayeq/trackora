@@ -3,6 +3,7 @@ import { CalendarDays, MapPin, Video, Link as LinkIcon } from "lucide-react";
 import { statusConfig } from "../../../utils/statusConfig";
 import formatDate from "../../../utils/formatDate";
 import CloseButton from "../../ui/CloseButton/CloseButton";
+import DocumentsSection from "../DocumentsSection/DocumentsSection";
 import "./ViewJobModal.css";
 
 function ViewJobModal({ isOpen, onClose, job }) {
@@ -25,10 +26,12 @@ function ViewJobModal({ isOpen, onClose, job }) {
   useEffect(() => {
     if (!isOpen) return;
 
+    const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
 
@@ -197,6 +200,8 @@ function ViewJobModal({ isOpen, onClose, job }) {
             {job.notes || "No notes added for this job."}
           </p>
         </section>
+
+        <DocumentsSection jobId={job._id} />
       </div>
     </div>
   );
