@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 72px;
+  min-height: 64px;
   padding: 12px 24px;
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-surface);
@@ -181,6 +181,19 @@
 .navbar__menu-button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.navbar__link--active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.navbar__link {
+  transition: color 0.2s ease;
+}
+
+.navbar__link:hover {
+  color: var(--color-primary);
 }
 
 @media screen and (max-width: 600px) {

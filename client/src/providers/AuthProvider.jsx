@@ -26,9 +26,15 @@ function AuthProvider({ children }) {
     }
 
     getCurrentUser(token)
-      .then((userData) => {
+      .then((response) => {
+        const userData = response.user || response;
+
         setCurrentUser(userData);
         setIsLoggedIn(true);
+
+        if (userData.preferences?.theme) {
+          localStorage.setItem("theme", userData.preferences.theme);
+        }
       })
       .catch((error) => {
         console.error("Token check failed:", error);
@@ -42,9 +48,48 @@ function AuthProvider({ children }) {
       });
   }, []);
 
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    const userTheme = currentUser?.preferences?.theme;
+
+    const selectedTheme = userTheme || storedTheme || "system";
+
+    if (userTheme) {
+      localStorage.setItem("theme", userTheme);
+    }
+
+    const root = document.documentElement;
+    const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = () => {
+      const resolvedTheme =
+        selectedTheme === "system"
+          ? systemThemeQuery.matches
+            ? "dark"
+            : "light"
+          : selectedTheme;
+
+      root.setAttribute("data-theme", resolvedTheme);
+    };
+
+    applyTheme();
+
+    if (selectedTheme !== "system") {
+      return undefined;
+    }
+
+    systemThemeQuery.addEventListener("change", applyTheme);
+
+    return () => {
+      systemThemeQuery.removeEventListener("change", applyTheme);
+    };
+  }, [currentUser?.preferences?.theme]);
+
   const login = async (credentials) => {
     const response = await loginRequest(credentials);
-    const { token, user } = response;
+
+    const token = response.token;
+    const user = response.user || response.data?.user;
 
     if (!token) {
       throw new Error("The server did not return a token");
@@ -55,45 +100,16 @@ function AuthProvider({ children }) {
     }
 
     localStorage.setItem("jwt", token);
+
+    if (user.preferences?.theme) {
+      localStorage.setItem("theme", user.preferences.theme);
+    }
+
     setCurrentUser(user);
     setIsLoggedIn(true);
 
     return user;
   };
-
-  useEffect(() => {
-    const selectedTheme = currentUser?.preferences?.theme || "system";
-    const root = document.documentElement;
-
-    const applyTheme = () => {
-      const systemPrefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-
-      const resolvedTheme =
-        selectedTheme === "system"
-          ? systemPrefersDark
-            ? "dark"
-            : "light"
-          : selectedTheme;
-
-      root.dataset.theme = resolvedTheme;
-    };
-
-    applyTheme();
-
-    if (selectedTheme !== "system") {
-      return;
-    }
-
-    const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    systemThemeQuery.addEventListener("change", applyTheme);
-
-    return () => {
-      systemThemeQuery.removeEventListener("change", applyTheme);
-    };
-  }, [currentUser?.preferences?.theme]);
 
   const updateProfile = async (profileData) => {
     const token = localStorage.getItem("jwt");
@@ -102,7 +118,8 @@ function AuthProvider({ children }) {
       throw new Error("You are not signed in");
     }
 
-    const updatedUser = await updateCurrentUser(token, profileData);
+    const response = await updateCurrentUser(token, profileData);
+    const updatedUser = response.user || response;
 
     setCurrentUser(updatedUser);
 
@@ -116,7 +133,10 @@ function AuthProvider({ children }) {
       throw new Error("You are not signed in");
     }
 
-    const updatedUser = await updatePreferencesRequest(token, preferences);
+    localStorage.setItem("theme", preferences.theme);
+
+    const response = await updatePreferencesRequest(token, preferences);
+    const updatedUser = response.user || response;
 
     setCurrentUser(updatedUser);
 
@@ -130,7 +150,8 @@ function AuthProvider({ children }) {
       throw new Error("You are not signed in");
     }
 
-    const updatedUser = await uploadAvatar(token, file);
+    const response = await uploadAvatar(token, file);
+    const updatedUser = response.user || response;
 
     setCurrentUser(updatedUser);
 

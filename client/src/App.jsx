@@ -4,6 +4,8 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./components/layout/Navbar";
 import ProtectedRoute from "./components/common/ProtectedRoute/ProtectedRoute";
 import PublicRoute from "./components/common/PublicRoute/PublicRoute";
+
+import Landing from "./pages/Landing/Landing";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
@@ -19,8 +21,10 @@ function App() {
       <Navbar />
 
       <Routes>
+        <Route path="/" element={<Landing />} />
+
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />

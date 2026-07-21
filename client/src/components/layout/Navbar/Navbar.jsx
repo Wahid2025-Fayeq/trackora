@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Settings, User, X } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import Button from "../../ui/Button/Button";
 import useAuth from "../../../hooks/useAuth";
@@ -12,9 +12,12 @@ function Navbar() {
   const navigate = useNavigate();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const userMenuRef = useRef(null);
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navLinkClass = ({ isActive }) =>
+    `navbar__link${isActive ? " navbar__link--active" : ""}`;
 
   useEffect(() => {
     if (!isUserMenuOpen) {
@@ -64,7 +67,7 @@ function Navbar() {
       <button
         type="button"
         className="navbar__menu-button"
-        onClick={() => setIsMobileMenuOpen((currentValue) => !currentValue)}
+        onClick={() => setIsMobileMenuOpen((current) => !current)}
         aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
         aria-expanded={isMobileMenuOpen}
         aria-controls="main-navigation"
@@ -81,17 +84,27 @@ function Navbar() {
       >
         {isLoggedIn ? (
           <>
-            <Link className="navbar__link" to="/" onClick={handleMenuLinkClick}>
+            <NavLink
+              to="/"
+              className={navLinkClass}
+              onClick={handleMenuLinkClick}
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/dashboard"
+              className={navLinkClass}
+              onClick={handleMenuLinkClick}
+            >
               Dashboard
-            </Link>
+            </NavLink>
 
             <div className="navbar__user-menu" ref={userMenuRef}>
               <button
                 className="navbar__user-button"
                 type="button"
-                onClick={() =>
-                  setIsUserMenuOpen((currentValue) => !currentValue)
-                }
+                onClick={() => setIsUserMenuOpen((current) => !current)}
                 aria-haspopup="menu"
                 aria-expanded={isUserMenuOpen}
                 aria-controls="navbar-user-dropdown"
@@ -171,21 +184,29 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link
-              className="navbar__link"
+            <NavLink
+              to="/"
+              className={navLinkClass}
+              onClick={handleMenuLinkClick}
+            >
+              Home
+            </NavLink>
+
+            <NavLink
               to="/login"
+              className={navLinkClass}
               onClick={handleMenuLinkClick}
             >
               Sign In
-            </Link>
+            </NavLink>
 
-            <Link
-              className="navbar__link"
+            <NavLink
               to="/register"
+              className={navLinkClass}
               onClick={handleMenuLinkClick}
             >
               Register
-            </Link>
+            </NavLink>
           </>
         )}
       </nav>

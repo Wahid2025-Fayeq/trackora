@@ -93,7 +93,7 @@ function Register() {
         password: formData.password,
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (requestError) {
       setError(requestError.message || "Unable to create account");
     } finally {

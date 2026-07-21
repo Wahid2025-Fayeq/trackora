@@ -47,7 +47,7 @@ function Login() {
         password: formData.password,
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Unable to sign in");
     } finally {

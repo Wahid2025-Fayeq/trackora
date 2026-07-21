@@ -5,7 +5,7 @@ function PublicRoute({ children }) {
   const { isLoggedIn } = useAuth();
 
   if (isLoggedIn) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
