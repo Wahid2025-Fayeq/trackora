@@ -285,3 +285,55 @@
   margin: 0;
   line-height: 1.5;
 }
+
+@media (max-width: 900px) {
+  .dashboard__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .dashboard__charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 32px 0;
+  }
+
+  .dashboard__header {
+    margin-bottom: 32px;
+  }
+
+  .dashboard__title {
+    font-size: 1.6rem;
+  }
+
+  .dashboard__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .dashboard__analytics-summary,
+  .dashboard__analytics-list {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__upcoming-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .dashboard__upcoming-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .dashboard__upcoming-actions .button,
+  .dashboard__join-button {
+    flex: 1;
+  }
+}

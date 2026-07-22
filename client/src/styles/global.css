@@ -6,6 +6,9 @@
 
 html {
   color-scheme: light;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 html[data-theme="dark"] {
@@ -14,6 +17,9 @@ html[data-theme="dark"] {
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
   font-family: "Inter", sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
@@ -29,7 +35,11 @@ body {
 }
 
 #root {
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
 }
 
@@ -42,4 +52,11 @@ a {
     box-shadow 0.2s ease,
     transform 0.2s ease,
     opacity 0.2s ease;
+}
+
+.app__main {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
