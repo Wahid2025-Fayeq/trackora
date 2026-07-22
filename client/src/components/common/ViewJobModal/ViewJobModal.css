@@ -13,30 +13,13 @@
 .view-job-modal__content {
   position: relative;
   width: min(760px, calc(100vw - 40px));
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-x: hidden;
   overflow-y: auto;
   padding: 24px;
   border-radius: 12px;
   background-color: var(--color-surface);
   box-shadow: var(--shadow-card);
-}
-
-.view-job-modal__close {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--color-muted);
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.view-job-modal__close:hover {
-  color: var(--color-text);
 }
 
 .view-job-modal__title {
@@ -60,6 +43,13 @@
   display: grid;
   gap: 18px;
   padding: 24px 0;
+}
+
+.view-job-modal__title,
+.view-job-modal__company,
+.view-job-modal__value,
+.view-job-modal__notes-text {
+  overflow-wrap: anywhere;
 }
 
 .view-job-modal__detail {
@@ -180,38 +170,51 @@
   overflow-wrap: anywhere;
 }
 
-.view-job-modal__meeting-link:hover {
-  text-decoration: underline;
-}
-
 .view-job-modal__interview-notes {
   padding-top: 16px;
   margin-top: 16px;
   border-top: 1px solid var(--color-border);
 }
+
 .view-job-modal__interview-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.view-job-modal__meeting-link {
-  display: inline-block;
-  margin-top: 4px;
-  color: var(--color-primary);
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
+@media (hover: hover) and (pointer: fine) {
+  .view-job-modal__meeting-link:hover {
+    text-decoration-thickness: 2px;
+  }
 }
 
 @media (max-width: 600px) {
   .view-job-modal {
+    align-items: flex-start;
     padding: 12px;
   }
 
   .view-job-modal__content {
     width: 100%;
-    max-height: calc(100vh - 24px);
-    padding: 20px;
+    max-height: calc(100dvh - 24px);
+    padding: 20px 16px;
+  }
+
+  .view-job-modal__detail {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .view-job-modal__value {
+    text-align: left;
+  }
+
+  .view-job-modal__interview {
+    padding: 14px;
+  }
+
+  .view-job-modal__title {
+    font-size: 22px;
   }
 }

@@ -52,14 +52,20 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
     return null;
   }
 
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget && !isSubmitting) {
+      onClose();
+    }
+  };
+
   return (
     <div
       className="add-job-modal"
-      onClick={!isSubmitting ? onClose : undefined}
+      onClick={handleOverlayClick}
+      role="presentation"
     >
       <div
         className="add-job-modal__content"
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-job-modal-title"

@@ -55,16 +55,25 @@ function ViewJobModal({ isOpen, onClose, job }) {
     job.interview?.meetingLink ||
     job.interview?.notes;
 
-  const formattedInterviewDate = job.interview?.date
-    ? new Intl.DateTimeFormat("en-US", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }).format(new Date(job.interview.date))
-    : "";
+  const formattedInterviewDate = (() => {
+    if (!job.interview?.date) {
+      return "";
+    }
+
+    const interviewDate = new Date(job.interview.date);
+
+    if (Number.isNaN(interviewDate.getTime())) {
+      return "Date unavailable";
+    }
+
+    return new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(interviewDate);
+  })();
 
   const meetingLink = job.interview?.meetingLink
-    ? job.interview.meetingLink.startsWith("http://") ||
-      job.interview.meetingLink.startsWith("https://")
+    ? /^https?:\/\//i.test(job.interview.meetingLink)
       ? job.interview.meetingLink
       : `https://${job.interview.meetingLink}`
     : "";
@@ -87,7 +96,12 @@ function ViewJobModal({ isOpen, onClose, job }) {
           <h2 id="view-job-modal-title" className="view-job-modal__title">
             {job.title}
           </h2>
-          <p className="view-job-modal__company">{job.company}</p>
+          <p
+            id="view-job-modal-description"
+            className="view-job-modal__company"
+          >
+            {job.company}
+          </p>
         </header>
 
         <div className="view-job-modal__details">
@@ -97,7 +111,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
             <span
               className={`view-job-modal__status view-job-modal__status_${currentStatus?.className}`}
             >
-              {StatusIcon && <StatusIcon size={14} />}
+              {StatusIcon && <StatusIcon size={14} aria-hidden="true" />}
               {currentStatus?.label || job.status}
             </span>
           </div>

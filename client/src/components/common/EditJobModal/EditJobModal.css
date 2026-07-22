@@ -18,7 +18,9 @@
 
   width: 100%;
   max-width: 520px;
-  max-height: min(90vh, 800px);
+  max-height: calc(100dvh - 48px);
+
+  box-sizing: border-box;
 
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -31,7 +33,7 @@
 }
 
 .edit-job-modal__title {
-  margin: 0 0 24px;
+  margin: 0 40px 24px 0;
   color: var(--color-text);
   font-size: 24px;
 }
@@ -43,7 +45,7 @@
   }
 
   .edit-job-modal__content {
-    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
     padding: 24px 16px;
   }
 }

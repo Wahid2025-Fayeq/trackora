@@ -25,7 +25,7 @@ function JobCard({ job, onView, onEdit, onDelete }) {
           <span
             className={`job-card__status job-card__status_${currentStatus?.className}`}
           >
-            {StatusIcon && <StatusIcon size={14} />}
+            {StatusIcon && <StatusIcon size={14} aria-hidden="true" />}
             {currentStatus?.label}
           </span>
           <span>{formatDate(appliedDate)}</span>
@@ -50,7 +50,12 @@ function JobCard({ job, onView, onEdit, onDelete }) {
         >
           Edit
         </Button>
-        <Button size="small" variant="danger" onClick={() => onDelete(job._id)}>
+        <Button
+          type="button"
+          size="small"
+          variant="danger"
+          onClick={() => onDelete(job._id)}
+        >
           Delete
         </Button>
       </div>

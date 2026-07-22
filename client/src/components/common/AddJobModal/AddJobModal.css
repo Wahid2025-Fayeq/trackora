@@ -1,13 +1,16 @@
 .add-job-modal {
   position: fixed;
   inset: 0;
-  background: var(--overlay-background);
+  z-index: 1000;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  z-index: 1000;
+  padding: 24px;
+  overflow-y: auto;
+
+  background: var(--overlay-background);
 }
 
 .add-job-modal__content {
@@ -15,31 +18,34 @@
 
   width: 100%;
   max-width: 500px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  box-sizing: border-box;
 
   padding: 32px;
 
-  background: var(--color-surface);
   border-radius: 16px;
-}
-
-.add-job-modal__close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-
-  border: none;
-  background: transparent;
-
-  font-size: 28px;
-  cursor: pointer;
+  background: var(--color-surface);
 }
 
 .add-job-modal__title {
-  margin: 0 0 24px;
+  margin: 0 40px 24px 0;
 }
 
-.add-job-modal__form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+@media (max-width: 600px) {
+  .add-job-modal {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .add-job-modal__content {
+    max-height: calc(100dvh - 32px);
+    padding: 24px 18px;
+    border-radius: 12px;
+  }
+
+  .add-job-modal__title {
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+  }
 }

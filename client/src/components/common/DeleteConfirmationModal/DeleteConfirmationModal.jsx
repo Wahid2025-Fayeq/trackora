@@ -18,6 +18,7 @@ function DeleteConfirmationModal({
   const [confirmation, setConfirmation] = useState("");
 
   const requiresConfirmation = Boolean(confirmationText);
+
   const canConfirm =
     !isDeleting && (!requiresConfirmation || confirmation === confirmationText);
 
@@ -45,10 +46,12 @@ function DeleteConfirmationModal({
       return;
     }
 
+    const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
 
@@ -88,6 +91,7 @@ function DeleteConfirmationModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-modal-title"
+        aria-describedby="delete-modal-description"
       >
         <CloseButton onClick={onClose} disabled={isDeleting} />
 
@@ -95,7 +99,9 @@ function DeleteConfirmationModal({
           {title}
         </h2>
 
-        <p className="delete-modal__text">{message || defaultMessage}</p>
+        <p id="delete-modal-description" className="delete-modal__text">
+          {message || defaultMessage}
+        </p>
 
         {requiresConfirmation && (
           <div className="delete-modal__confirmation">
@@ -114,16 +120,23 @@ function DeleteConfirmationModal({
               onChange={(event) => setConfirmation(event.target.value)}
               disabled={isDeleting}
               autoComplete="off"
+              autoFocus
             />
           </div>
         )}
 
         <div className="delete-modal__actions">
-          <Button variant="secondary" onClick={onClose} disabled={isDeleting}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            disabled={isDeleting}
+          >
             Cancel
           </Button>
 
           <Button
+            type="button"
             variant="danger"
             onClick={handleConfirm}
             isLoading={isDeleting}

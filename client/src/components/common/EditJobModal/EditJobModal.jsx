@@ -55,17 +55,24 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
     return null;
   }
 
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget && !isSubmitting) {
+      onClose();
+    }
+  };
+
   return (
     <div
       className="edit-job-modal"
-      onClick={!isSubmitting ? onClose : undefined}
+      onClick={handleOverlayClick}
+      role="presentation"
     >
       <div
         className="edit-job-modal__content"
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-job-modal-title"
+      
       >
         <CloseButton onClick={onClose} disabled={isSubmitting} />
 
