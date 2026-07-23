@@ -1,0 +1,141 @@
+.follow-up-reminders {
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.follow-up-reminders__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.follow-up-reminders__header svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--color-primary);
+}
+
+.follow-up-reminders__header h2 {
+  margin: 0 0 4px;
+  color: var(--color-text);
+  font-size: 22px;
+}
+
+.follow-up-reminders__header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.follow-up-reminders__group + .follow-up-reminders__group {
+  margin-top: 24px;
+}
+
+.follow-up-reminders__heading {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.follow-up-reminders__heading_overdue {
+  color: var(--color-danger);
+}
+
+.follow-up-reminders__heading_today {
+  color: var(--color-warning);
+}
+
+.follow-up-reminders__heading_upcoming {
+  color: var(--color-primary);
+}
+
+.follow-up-reminders__list {
+  display: grid;
+  gap: 12px;
+}
+
+.follow-up-reminders__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-surface-secondary);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.follow-up-reminders__card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.follow-up-reminders__info {
+  min-width: 0;
+}
+
+.follow-up-reminders__info h4 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.follow-up-reminders__info p {
+  margin: 4px 0 10px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.follow-up-reminders__date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.follow-up-reminders__date svg {
+  flex-shrink: 0;
+}
+
+.follow-up-reminders__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .follow-up-reminders {
+    padding: 18px;
+  }
+
+  .follow-up-reminders__card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .follow-up-reminders__card button {
+    width: 100%;
+  }
+
+  .follow-up-reminders__actions {
+    width: 100%;
+  }
+
+  .follow-up-reminders__actions button {
+    flex: 1;
+  }
+}

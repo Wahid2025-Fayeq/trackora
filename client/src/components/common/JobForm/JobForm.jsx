@@ -12,7 +12,7 @@ import { statusOptions } from "../../../utils/selectOptions";
 import "./JobForm.css";
 
 const formatDateForState = (date) => {
-  if (!date) {
+  if (!date || Number.isNaN(date.getTime())) {
     return "";
   }
 
@@ -22,6 +22,20 @@ const formatDateForState = (date) => {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 };
 
+const createInterviewDateTime = (date, time) => {
+  if (!date || !time) {
+    return null;
+  }
+
+  const interviewDateTime = new Date(`${date}T${time}:00`);
+
+  if (Number.isNaN(interviewDateTime.getTime())) {
+    return null;
+  }
+
+  return interviewDateTime;
+};
+
 const defaultInitialValues = {
   title: "",
   company: "",
@@ -29,12 +43,19 @@ const defaultInitialValues = {
   status: "",
   appliedDate: formatDateForState(new Date()),
   notes: "",
+
   interview: {
     date: "",
     time: "",
     type: "",
     location: "",
     meetingLink: "",
+    notes: "",
+  },
+
+  followUp: {
+    date: "",
+    completed: false,
     notes: "",
   },
 };
@@ -46,57 +67,117 @@ function JobForm({
   isSubmitting = false,
 }) {
   const [formData, setFormData] = useState(defaultInitialValues);
+  const [interviewError, setInterviewError] = useState("");
 
   useEffect(() => {
     const interviewDate = initialValues.interview?.date
       ? new Date(initialValues.interview.date)
       : null;
 
+    const followUpDate = initialValues.followUp?.date
+      ? new Date(initialValues.followUp.date)
+      : null;
+
     setFormData({
       ...defaultInitialValues,
       ...initialValues,
+
       interview: {
         ...defaultInitialValues.interview,
         ...initialValues.interview,
-        date: interviewDate ? formatDateForState(interviewDate) : "",
-        time: interviewDate ? interviewDate.toTimeString().slice(0, 5) : "",
+
+        date:
+          interviewDate && !Number.isNaN(interviewDate.getTime())
+            ? formatDateForState(interviewDate)
+            : "",
+
+        time:
+          interviewDate && !Number.isNaN(interviewDate.getTime())
+            ? interviewDate.toTimeString().slice(0, 5)
+            : "",
+      },
+
+      followUp: {
+        ...defaultInitialValues.followUp,
+        ...initialValues.followUp,
+
+        date:
+          followUpDate && !Number.isNaN(followUpDate.getTime())
+            ? formatDateForState(followUpDate)
+            : "",
       },
     });
+
+    setInterviewError("");
   }, [initialValues]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((previousData) => ({
+      ...previousData,
       [name]: value,
     }));
+
+    if (name === "status") {
+      setInterviewError("");
+    }
   };
 
   const handleApplicationDateChange = (date) => {
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((previousData) => ({
+      ...previousData,
       appliedDate: formatDateForState(date),
     }));
   };
 
-  const handleInterviewChange = (e) => {
-    const { name, value } = e.target;
+  const handleInterviewChange = (event) => {
+    const { name, value } = event.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
+    setInterviewError("");
+
+    setFormData((previousData) => ({
+      ...previousData,
+
       interview: {
-        ...prevData.interview,
+        ...previousData.interview,
         [name]: value,
       },
     }));
   };
 
   const handleInterviewDateChange = (date) => {
-    setFormData((prevData) => ({
-      ...prevData,
+    setInterviewError("");
+
+    setFormData((previousData) => ({
+      ...previousData,
+
       interview: {
-        ...prevData.interview,
+        ...previousData.interview,
+        date: formatDateForState(date),
+      },
+    }));
+  };
+
+  const handleFollowUpChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    setFormData((previousData) => ({
+      ...previousData,
+
+      followUp: {
+        ...previousData.followUp,
+        [name]: type === "checkbox" ? checked : value,
+      },
+    }));
+  };
+
+  const handleFollowUpDateChange = (date) => {
+    setFormData((previousData) => ({
+      ...previousData,
+
+      followUp: {
+        ...previousData.followUp,
         date: formatDateForState(date),
       },
     }));
@@ -115,39 +196,67 @@ function JobForm({
         formData.interview.time &&
         formData.interview.type));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    setInterviewError("");
 
     if (!isFormValid || isSubmitting) {
       return;
     }
 
-    const interviewDateTime =
-      isInterviewStatus && formData.interview.date && formData.interview.time
-        ? new Date(
-            `${formData.interview.date}T${formData.interview.time}`,
-          ).toISOString()
-        : null;
-
-    const interviewData = {
-      date: interviewDateTime,
-      type: formData.interview.type,
-      location: formData.interview.location,
-      meetingLink: formData.interview.meetingLink,
-      notes: formData.interview.notes,
+    let interviewData = {
+      date: null,
+      time: "",
+      type: "",
+      location: "",
+      meetingLink: "",
+      notes: "",
     };
 
-    onSubmit({
+    if (isInterviewStatus) {
+      const { date, time, type } = formData.interview;
+
+      if (!date || !time || !type) {
+        setInterviewError("Interview date, time, and type are required.");
+        return;
+      }
+
+      const interviewDateTime = createInterviewDateTime(date, time);
+
+      if (!interviewDateTime) {
+        setInterviewError("Please enter a valid interview date and time.");
+        return;
+      }
+
+      if (interviewDateTime.getTime() <= Date.now()) {
+        setInterviewError("The interview date and time must be in the future.");
+        return;
+      }
+
+      interviewData = {
+        ...formData.interview,
+        date: interviewDateTime.toISOString(),
+      };
+    }
+
+    const followUpData = {
+      date: formData.followUp.date
+        ? new Date(`${formData.followUp.date}T12:00:00`).toISOString()
+        : null,
+
+      completed: formData.followUp.completed,
+      notes: formData.followUp.notes.trim(),
+    };
+
+    await onSubmit({
       ...formData,
-      interview: isInterviewStatus
-        ? interviewData
-        : {
-            date: null,
-            type: "",
-            location: "",
-            meetingLink: "",
-            notes: "",
-          },
+      title: formData.title.trim(),
+      company: formData.company.trim(),
+      location: formData.location.trim(),
+      notes: formData.notes.trim(),
+      interview: interviewData,
+      followUp: followUpData,
     });
   };
 
@@ -249,6 +358,7 @@ function JobForm({
                   dateFormat="MM/dd/yyyy"
                   placeholderText="Select interview date"
                   disabled={isSubmitting}
+                  minDate={new Date()}
                   popperPlacement="bottom-start"
                   popperClassName="job-form__datepicker-popper"
                   calendarClassName="job-form__calendar"
@@ -327,8 +437,77 @@ function JobForm({
             placeholder="Interviewers, preparation topics, questions..."
             disabled={isSubmitting}
           />
+
+          {interviewError && (
+            <p className="job-form__error" role="alert">
+              {interviewError}
+            </p>
+          )}
         </section>
       )}
+
+      <section className="job-form__follow-up">
+        <h3 className="job-form__section-title">Follow-up Reminder</h3>
+
+        <div className="job-form__datepicker">
+          <label
+            className="job-form__datepicker-label"
+            htmlFor="follow-up-date"
+          >
+            Follow-up Date
+          </label>
+
+          <div className="job-form__datepicker-input">
+            <DatePicker
+              id="follow-up-date"
+              selected={
+                formData.followUp.date
+                  ? new Date(`${formData.followUp.date}T00:00:00`)
+                  : null
+              }
+              onChange={handleFollowUpDateChange}
+              dateFormat="MM/dd/yyyy"
+              placeholderText="Select follow-up date"
+              disabled={isSubmitting}
+              minDate={new Date()}
+              popperPlacement="bottom-start"
+              popperClassName="job-form__datepicker-popper"
+              calendarClassName="job-form__calendar"
+              wrapperClassName="job-form__datepicker-wrapper"
+              showPopperArrow={false}
+            />
+
+            <Calendar
+              className="job-form__datepicker-icon"
+              size={16}
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+
+        <Textarea
+          label="Follow-up Notes"
+          name="notes"
+          value={formData.followUp.notes}
+          onChange={handleFollowUpChange}
+          placeholder="Email the recruiter, send a LinkedIn message..."
+          disabled={isSubmitting}
+        />
+
+        {formData.followUp.date && (
+          <label className="job-form__checkbox">
+            <input
+              type="checkbox"
+              name="completed"
+              checked={formData.followUp.completed}
+              onChange={handleFollowUpChange}
+              disabled={isSubmitting}
+            />
+
+            <span>Follow-up completed</span>
+          </label>
+        )}
+      </section>
 
       <Textarea
         label="General Notes"
@@ -337,9 +516,8 @@ function JobForm({
         onChange={handleChange}
         placeholder={`Recruiter:
 Salary:
-Follow-up Date:
 Job URL:
-Notes:`}
+Additional notes:`}
         disabled={isSubmitting}
       />
 

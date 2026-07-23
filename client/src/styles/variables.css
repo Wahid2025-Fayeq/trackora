@@ -25,6 +25,7 @@
 
   --color-danger: #dc2626;
   --color-danger-background: #fef2f2;
+  --color-warning: #d97706;
 
   --shadow-card: 0 4px 14px rgba(15, 23, 42, 0.08);
   --overlay-background: rgba(15, 23, 42, 0.55);
@@ -59,6 +60,7 @@
 
   --color-danger: #f87171;
   --color-danger-background: #450a0a;
+  --color-warning: #d97706;
 
   --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.35);
   --overlay-background: rgba(0, 0, 0, 0.7);

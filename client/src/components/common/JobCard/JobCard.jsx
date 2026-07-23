@@ -1,13 +1,21 @@
+import { Bell, CheckCircle } from "lucide-react";
+
 import Button from "../../ui/Button";
 import { statusConfig } from "../../../utils/statusConfig";
 import formatDate from "../../../utils/formatDate";
 import "./JobCard.css";
 
 function JobCard({ job, onView, onEdit, onDelete }) {
-  const { title, company, status, appliedDate, location } = job;
+  const { title, company, status, appliedDate, location, followUp } = job;
 
   const currentStatus = statusConfig[status];
   const StatusIcon = currentStatus?.icon;
+
+  const hasFollowUp = Boolean(followUp?.date);
+  const isFollowUpCompleted = Boolean(followUp?.completed);
+
+  const isFollowUpOverdue =
+    hasFollowUp && !isFollowUpCompleted && new Date(followUp.date) < new Date();
 
   const handleViewClick = (e) => {
     e.preventDefault();
@@ -32,6 +40,38 @@ function JobCard({ job, onView, onEdit, onDelete }) {
           <span>{location}</span>
         </div>
       </div>
+
+      {hasFollowUp && (
+        <div
+          className={`job-card__follow-up ${
+            isFollowUpCompleted
+              ? "job-card__follow-up_completed"
+              : isFollowUpOverdue
+                ? "job-card__follow-up_overdue"
+                : "job-card__follow-up_upcoming"
+          }`}
+        >
+          <div className="job-card__follow-up-info">
+            {isFollowUpCompleted ? (
+              <CheckCircle size={16} />
+            ) : (
+              <Bell size={16} />
+            )}
+
+            <span className="job-card__follow-up-label">
+              {isFollowUpCompleted
+                ? "Follow-up completed"
+                : isFollowUpOverdue
+                  ? "Follow-up overdue"
+                  : "Follow-up"}
+            </span>
+          </div>
+
+          <span className="job-card__follow-up-date">
+            {formatDate(followUp.date)}
+          </span>
+        </div>
+      )}
 
       <div className="job-card__actions">
         <Button

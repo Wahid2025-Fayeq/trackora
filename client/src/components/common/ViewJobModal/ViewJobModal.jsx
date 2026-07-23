@@ -1,17 +1,28 @@
 import { useEffect } from "react";
-import { CalendarDays, MapPin, Video, Link as LinkIcon } from "lucide-react";
+import {
+  Bell,
+  CalendarDays,
+  CheckCircle,
+  Link as LinkIcon,
+  MapPin,
+  Video,
+} from "lucide-react";
+
 import { statusConfig } from "../../../utils/statusConfig";
 import formatDate from "../../../utils/formatDate";
 import CloseButton from "../../ui/CloseButton/CloseButton";
 import DocumentsSection from "../DocumentsSection/DocumentsSection";
+import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
 import "./ViewJobModal.css";
 
 function ViewJobModal({ isOpen, onClose, job }) {
+  useBodyScrollLock(isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleEsc = (e) => {
-      if (e.key === "Escape") {
+    const handleEsc = (event) => {
+      if (event.key === "Escape") {
         onClose();
       }
     };
@@ -23,20 +34,8 @@ function ViewJobModal({ isOpen, onClose, job }) {
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
       onClose();
     }
   };
@@ -48,12 +47,18 @@ function ViewJobModal({ isOpen, onClose, job }) {
   const currentStatus = statusConfig[job.status];
   const StatusIcon = currentStatus?.icon;
 
-  const hasInterviewDetails =
+  const hasInterviewDetails = Boolean(
     job.interview?.date ||
     job.interview?.type ||
     job.interview?.location ||
     job.interview?.meetingLink ||
-    job.interview?.notes;
+    job.interview?.notes,
+  );
+
+  const hasFollowUp = Boolean(
+    job.followUp?.date || job.followUp?.notes || job.followUp?.completed,
+  );
+  const isFollowUpCompleted = Boolean(job.followUp?.completed);
 
   const formattedInterviewDate = (() => {
     if (!job.interview?.date) {
@@ -89,6 +94,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="view-job-modal-title"
+        aria-describedby="view-job-modal-description"
       >
         <CloseButton onClick={onClose} />
 
@@ -96,6 +102,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
           <h2 id="view-job-modal-title" className="view-job-modal__title">
             {job.title}
           </h2>
+
           <p
             id="view-job-modal-description"
             className="view-job-modal__company"
@@ -118,6 +125,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
 
           <div className="view-job-modal__detail">
             <span className="view-job-modal__label">Application Date</span>
+
             <span className="view-job-modal__value">
               {formatDate(job.appliedDate)}
             </span>
@@ -125,7 +133,10 @@ function ViewJobModal({ isOpen, onClose, job }) {
 
           <div className="view-job-modal__detail">
             <span className="view-job-modal__label">Location</span>
-            <span className="view-job-modal__value">{job.location}</span>
+
+            <span className="view-job-modal__value">
+              {job.location || "Not provided"}
+            </span>
           </div>
         </div>
 
@@ -134,12 +145,13 @@ function ViewJobModal({ isOpen, onClose, job }) {
             <h3 className="view-job-modal__section-title">Interview Details</h3>
 
             <div className="view-job-modal__interview-list">
-              {job.interview.date && (
+              {job.interview?.date && (
                 <div className="view-job-modal__interview-item">
                   <CalendarDays size={18} aria-hidden="true" />
 
                   <div>
                     <span className="view-job-modal__label">Date and Time</span>
+
                     <p className="view-job-modal__value">
                       {formattedInterviewDate}
                     </p>
@@ -147,12 +159,13 @@ function ViewJobModal({ isOpen, onClose, job }) {
                 </div>
               )}
 
-              {job.interview.type && (
+              {job.interview?.type && (
                 <div className="view-job-modal__interview-item">
                   <Video size={18} aria-hidden="true" />
 
                   <div>
                     <span className="view-job-modal__label">Type</span>
+
                     <p className="view-job-modal__value">
                       {job.interview.type}
                     </p>
@@ -160,7 +173,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
                 </div>
               )}
 
-              {job.interview.location && (
+              {job.interview?.location && (
                 <div className="view-job-modal__interview-item">
                   <MapPin size={18} aria-hidden="true" />
 
@@ -168,6 +181,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
                     <span className="view-job-modal__label">
                       Interview Location
                     </span>
+
                     <p className="view-job-modal__value">
                       {job.interview.location}
                     </p>
@@ -175,7 +189,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
                 </div>
               )}
 
-              {job.interview.meetingLink && (
+              {job.interview?.meetingLink && (
                 <div className="view-job-modal__interview-item">
                   <LinkIcon size={18} aria-hidden="true" />
 
@@ -195,12 +209,66 @@ function ViewJobModal({ isOpen, onClose, job }) {
               )}
             </div>
 
-            {job.interview.notes && (
+            {job.interview?.notes && (
               <div className="view-job-modal__interview-notes">
                 <span className="view-job-modal__label">Interview Notes</span>
 
                 <p className="view-job-modal__notes-text">
                   {job.interview.notes}
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {hasFollowUp && (
+          <section className="view-job-modal__follow-up">
+            <h3 className="view-job-modal__section-title">
+              Follow-up Reminder
+            </h3>
+
+            <div className="view-job-modal__follow-up-list">
+              <div className="view-job-modal__follow-up-item">
+                <CalendarDays size={18} aria-hidden="true" />
+
+                <div className="view-job-modal__follow-up-content">
+                  <span className="view-job-modal__label">Follow-up Date</span>
+
+                  <p className="view-job-modal__value">
+                    {formatDate(job.followUp.date)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="view-job-modal__follow-up-item">
+                {isFollowUpCompleted ? (
+                  <CheckCircle size={18} aria-hidden="true" />
+                ) : (
+                  <Bell size={18} aria-hidden="true" />
+                )}
+
+                <div className="view-job-modal__follow-up-content">
+                  <span className="view-job-modal__label">Status</span>
+
+                  <p
+                    className={`view-job-modal__follow-up-status ${
+                      isFollowUpCompleted
+                        ? "view-job-modal__follow-up-status_completed"
+                        : "view-job-modal__follow-up-status_pending"
+                    }`}
+                  >
+                    {isFollowUpCompleted ? "Completed" : "Pending"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {job.followUp.notes && (
+              <div className="view-job-modal__follow-up-notes">
+                <span className="view-job-modal__label">Follow-up Notes</span>
+
+                <p className="view-job-modal__notes-text">
+                  {job.followUp.notes}
                 </p>
               </div>
             )}

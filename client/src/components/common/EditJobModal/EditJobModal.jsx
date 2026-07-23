@@ -1,33 +1,23 @@
 import { useEffect, useState } from "react";
+
 import JobForm from "../JobForm/JobForm";
 import CloseButton from "../../ui/CloseButton/CloseButton";
+import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
+
 import "./EditJobModal.css";
 
 function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (formData) => {
-    setIsSubmitting(true);
-
-    onUpdateJob({
-      ...job,
-      ...formData,
-    })
-      .then(() => {
-        onClose();
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
-  };
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
-    const handleEsc = (e) => {
-      if (e.key === "Escape" && !isSubmitting) {
+    const handleEsc = (event) => {
+      if (event.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
@@ -39,27 +29,30 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
     };
   }, [isOpen, onClose, isSubmitting]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
+  const handleSubmit = (formData) => {
+    setIsSubmitting(true);
 
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  if (!isOpen || !job) {
-    return null;
-  }
+    return onUpdateJob({
+      ...job,
+      ...formData,
+    })
+      .then(() => {
+        onClose();
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
 
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget && !isSubmitting) {
       onClose();
     }
   };
+
+  if (!isOpen || !job) {
+    return null;
+  }
 
   return (
     <div
@@ -72,7 +65,6 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="edit-job-modal-title"
-      
       >
         <CloseButton onClick={onClose} disabled={isSubmitting} />
 

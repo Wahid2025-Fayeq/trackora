@@ -91,6 +91,23 @@ const jobSchema = new mongoose.Schema(
         default: "",
       },
     },
+
+    followUp: {
+      date: {
+        type: Date,
+        default: null,
+      },
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+      notes: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+    },
+
     documents: {
       type: [documentSchema],
       default: [],

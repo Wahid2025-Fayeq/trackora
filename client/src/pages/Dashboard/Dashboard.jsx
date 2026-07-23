@@ -12,6 +12,7 @@ import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import StatusChart from "../../components/common/StatusChart/StatusChart";
+import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
 
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
@@ -33,6 +34,7 @@ import {
   getStatusChartData,
 } from "../../utils/jobAnalytics";
 
+import getFollowUpReminders from "../../utils/followUpReminders";
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
@@ -70,35 +72,52 @@ const getInterviewCountdown = (date) => {
     (interviewDay.getTime() - today.getTime()) / MILLISECONDS_PER_DAY,
   );
 
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(interviewDate);
+
   const formattedTime = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "2-digit",
   }).format(interviewDate);
 
   if (daysAway === 0) {
-    return `Today • ${formattedTime}`;
+    return `Today • ${formattedDate} at ${formattedTime}`;
   }
 
   if (daysAway === 1) {
-    return `Tomorrow • ${formattedTime}`;
+    return `Tomorrow • ${formattedDate} at ${formattedTime}`;
   }
 
   if (daysAway > 1 && daysAway < 7) {
-    return `In ${daysAway} days • ${formattedTime}`;
+    return `In ${daysAway} days • ${formattedDate} at ${formattedTime}`;
   }
 
   if (daysAway >= 7 && daysAway < 14) {
-    return `Next week • ${formattedTime}`;
+    return `Next week • ${formattedDate} at ${formattedTime}`;
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(interviewDate);
+  return `${formattedDate} at ${formattedTime}`;
 };
 
 function Dashboard() {
   const { currentUser } = useAuth();
+
+  const notifications = {
+    interviewReminders:
+      currentUser?.preferences?.notifications?.interviewReminders ?? true,
+
+    followUpReminders:
+      currentUser?.preferences?.notifications?.followUpReminders ?? true,
+
+    applicationUpdates:
+      currentUser?.preferences?.notifications?.applicationUpdates ?? true,
+
+    emailNotifications:
+      currentUser?.preferences?.notifications?.emailNotifications ?? false,
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs, setJobs] = useState([]);
@@ -180,7 +199,10 @@ function Dashboard() {
     return createJob(newJob)
       .then((createdJob) => {
         setJobs((currentJobs) => [createdJob, ...currentJobs]);
-        toast.success(`"${createdJob.title}" added successfully`);
+
+        if (notifications.applicationUpdates) {
+          toast.success(`"${createdJob.title}" added successfully`);
+        }
       })
       .catch((requestError) => {
         console.error("Failed to add job:", requestError);
@@ -196,12 +218,39 @@ function Dashboard() {
           currentJobs.map((job) => (job._id === savedJob._id ? savedJob : job)),
         );
 
-        toast.success(`"${savedJob.title}" updated successfully`);
+        if (notifications.applicationUpdates) {
+          toast.success(`"${savedJob.title}" updated successfully`);
+        }
       })
       .catch((requestError) => {
         console.error("Failed to update job:", requestError);
         toast.error(requestError.message || "Unable to update job");
         throw requestError;
+      });
+  };
+
+  const handleCompleteFollowUp = (job) => {
+    const updatedJob = {
+      ...job,
+      followUp: {
+        ...job.followUp,
+        completed: true,
+      },
+    };
+
+    return updateJob(job._id, updatedJob)
+      .then((savedJob) => {
+        setJobs((currentJobs) =>
+          currentJobs.map((currentJob) =>
+            currentJob._id === savedJob._id ? savedJob : currentJob,
+          ),
+        );
+
+        toast.success(`Follow-up completed for "${savedJob.company}"`);
+      })
+      .catch((requestError) => {
+        console.error("Failed to complete follow-up:", requestError);
+        toast.error(requestError.message || "Unable to complete follow-up");
       });
   };
 
@@ -240,7 +289,9 @@ function Dashboard() {
         currentJobs.filter((job) => job._id !== jobToDelete._id),
       );
 
-      toast.success(`"${jobToDelete.title}" deleted successfully`);
+      if (notifications.applicationUpdates) {
+        toast.success(`"${jobToDelete.title}" deleted successfully`);
+      }
 
       setIsDeleteModalOpen(false);
       setJobToDelete(null);
@@ -302,6 +353,8 @@ function Dashboard() {
 
   const statusChartData = getStatusChartData(jobs);
   const monthlyApplicationsData = getMonthlyApplicationsData(jobs);
+
+  const { overdue, dueToday, upcoming } = getFollowUpReminders(jobs);
 
   const upcomingInterviews = jobs
     .filter((job) => {
@@ -390,91 +443,103 @@ function Dashboard() {
           </section>
         </section>
 
-        <section className="dashboard__upcoming">
-          <div className="dashboard__section-header">
-            <h2 className="dashboard__section-title">Upcoming Interviews</h2>
+        {notifications.followUpReminders && (
+          <FollowUpReminders
+            overdue={overdue}
+            dueToday={dueToday}
+            upcoming={upcoming}
+            onView={handleViewJobClick}
+            onComplete={handleCompleteFollowUp}
+          />
+        )}
 
-            <p className="dashboard__section-description">
-              Your next scheduled interviews.
-            </p>
-          </div>
+        {notifications.interviewReminders && (
+          <section className="dashboard__upcoming">
+            <div className="dashboard__section-header">
+              <h2 className="dashboard__section-title">Upcoming Interviews</h2>
 
-          {upcomingInterviews.length > 0 ? (
-            <div className="dashboard__upcoming-list">
-              {upcomingInterviews.map((job) => (
-                <article key={job._id} className="dashboard__upcoming-card">
-                  <div className="dashboard__upcoming-info">
-                    <div>
-                      <h3 className="dashboard__upcoming-company">
-                        {job.company}
-                      </h3>
+              <p className="dashboard__section-description">
+                Your next scheduled interviews.
+              </p>
+            </div>
 
-                      <p className="dashboard__upcoming-title">{job.title}</p>
-                    </div>
+            {upcomingInterviews.length > 0 ? (
+              <div className="dashboard__upcoming-list">
+                {upcomingInterviews.map((job) => (
+                  <article key={job._id} className="dashboard__upcoming-card">
+                    <div className="dashboard__upcoming-info">
+                      <div>
+                        <h3 className="dashboard__upcoming-company">
+                          {job.company}
+                        </h3>
 
-                    <div className="dashboard__upcoming-details">
-                      <div className="dashboard__upcoming-detail">
-                        <CalendarDays size={17} aria-hidden="true" />
-
-                        <time dateTime={job.interview.date}>
-                          {getInterviewCountdown(job.interview.date)}
-                        </time>
+                        <p className="dashboard__upcoming-title">{job.title}</p>
                       </div>
 
-                      {job.interview.type && (
+                      <div className="dashboard__upcoming-details">
                         <div className="dashboard__upcoming-detail">
-                          <Video size={17} aria-hidden="true" />
-                          <span>{job.interview.type}</span>
-                        </div>
-                      )}
+                          <CalendarDays size={17} aria-hidden="true" />
 
-                      {job.interview.location && (
-                        <div className="dashboard__upcoming-detail">
-                          <MapPin size={17} aria-hidden="true" />
-                          <span>{job.interview.location}</span>
+                          <time dateTime={job.interview.date}>
+                            {getInterviewCountdown(job.interview.date)}
+                          </time>
                         </div>
+
+                        {job.interview.type && (
+                          <div className="dashboard__upcoming-detail">
+                            <Video size={17} aria-hidden="true" />
+                            <span>{job.interview.type}</span>
+                          </div>
+                        )}
+
+                        {job.interview.location && (
+                          <div className="dashboard__upcoming-detail">
+                            <MapPin size={17} aria-hidden="true" />
+                            <span>{job.interview.location}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="dashboard__upcoming-actions">
+                      <Button
+                        size="small"
+                        variant="secondary"
+                        onClick={() => handleViewJobClick(job)}
+                      >
+                        View
+                      </Button>
+
+                      {job.interview.meetingLink && (
+                        <a
+                          className="dashboard__join-button"
+                          href={getMeetingLink(job.interview.meetingLink)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Join
+                        </a>
                       )}
                     </div>
-                  </div>
-
-                  <div className="dashboard__upcoming-actions">
-                    <Button
-                      size="small"
-                      variant="secondary"
-                      onClick={() => handleViewJobClick(job)}
-                    >
-                      View
-                    </Button>
-
-                    {job.interview.meetingLink && (
-                      <a
-                        className="dashboard__join-button"
-                        href={getMeetingLink(job.interview.meetingLink)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Join
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="dashboard__upcoming-empty">
-              <CalendarDays size={28} aria-hidden="true" />
-
-              <div>
-                <h3>No upcoming interviews</h3>
-
-                <p>
-                  Interview details will appear here after you schedule an
-                  interview.
-                </p>
+                  </article>
+                ))}
               </div>
-            </div>
-          )}
-        </section>
+            ) : (
+              <div className="dashboard__upcoming-empty">
+                <CalendarDays size={28} aria-hidden="true" />
+
+                <div>
+                  <h3>No upcoming interviews</h3>
+
+                  <p>
+                    Interview details will appear here after you schedule an
+                    interview.
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
         <section className="dashboard__jobs">
           <h2 className="dashboard__section-title">Recent Applications</h2>

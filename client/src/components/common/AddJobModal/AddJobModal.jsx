@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import JobForm from "../JobForm/JobForm";
 import CloseButton from "../../ui/CloseButton/CloseButton";
+import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
+
 import "./AddJobModal.css";
 
 function AddJobModal({ isOpen, onClose, onAddJob }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useBodyScrollLock(isOpen);
 
   const handleSubmit = (formData) => {
     setIsSubmitting(true);
@@ -35,18 +38,6 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [isOpen, onClose, isSubmitting]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
 
   if (!isOpen) {
     return null;

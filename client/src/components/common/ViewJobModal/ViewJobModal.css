@@ -5,8 +5,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  overflow: hidden;
+  padding: 24px;
+  overflow: auto;
   background-color: rgb(15 23 42 / 55%);
 }
 
@@ -182,6 +182,71 @@
   align-items: flex-start;
 }
 
+.view-job-modal__follow-up {
+  padding: 16px;
+  margin-top: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface-secondary);
+}
+
+.view-job-modal__follow-up-list {
+  display: grid;
+  gap: 16px;
+}
+
+.view-job-modal__follow-up-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.view-job-modal__follow-up-item > svg {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
+.view-job-modal__follow-up-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.view-job-modal__follow-up-content .view-job-modal__value,
+.view-job-modal__follow-up-status {
+  margin: 0;
+  text-align: left;
+}
+
+.view-job-modal__follow-up-status {
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.view-job-modal__follow-up-status_completed {
+  color: var(--color-success, #15803d);
+}
+
+.view-job-modal__follow-up-status_pending {
+  color: var(--color-primary);
+}
+
+.view-job-modal__follow-up-notes {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.view-job-modal__follow-up-notes .view-job-modal__notes-text {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .view-job-modal__meeting-link:hover {
     text-decoration-thickness: 2px;
@@ -210,7 +275,8 @@
     text-align: left;
   }
 
-  .view-job-modal__interview {
+  .view-job-modal__interview,
+  .view-job-modal__follow-up {
     padding: 14px;
   }
 

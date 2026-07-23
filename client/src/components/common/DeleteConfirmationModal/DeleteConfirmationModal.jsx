@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Button from "../../ui/Button/Button";
 import CloseButton from "../../ui/CloseButton/CloseButton";
+import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
+
 import "./DeleteConfirmationModal.css";
 
 function DeleteConfirmationModal({
@@ -15,6 +17,8 @@ function DeleteConfirmationModal({
   confirmationText = "",
   isDeleting = false,
 }) {
+  useBodyScrollLock(isOpen);
+
   const [confirmation, setConfirmation] = useState("");
 
   const requiresConfirmation = Boolean(confirmationText);
@@ -40,20 +44,6 @@ function DeleteConfirmationModal({
       document.removeEventListener("keydown", handleEsc);
     };
   }, [isOpen, isDeleting, onClose]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
 
   if (!isOpen) {
     return null;

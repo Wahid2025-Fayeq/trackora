@@ -1,12 +1,15 @@
-function formatDate(dateString) {
-  if (!dateString) {
+function formatDate(dateValue) {
+  if (!dateValue) {
     return "";
   }
 
-  const date = new Date(`${dateString}T00:00:00`);
+  const date =
+    typeof dateValue === "string" && !dateValue.includes("T")
+      ? new Date(`${dateValue}T00:00:00`)
+      : new Date(dateValue);
 
   if (Number.isNaN(date.getTime())) {
-    return dateString;
+    return "";
   }
 
   return date.toLocaleDateString("en-US", {

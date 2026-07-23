@@ -36,6 +36,7 @@ const updateJob = async (req, res, next) => {
       "appliedDate",
       "notes",
       "interview",
+      "followUp",
     ];
 
     const updates = {};
