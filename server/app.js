@@ -7,6 +7,7 @@ const jobsRouter = require("./routes/jobs");
 const usersRouter = require("./routes/users");
 const errorHandler = require("./middleware/errorHandler");
 const authRouter = require("./routes/auth");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/jobs", jobsRouter);
+app.use("/api/ai", aiRoutes);
 
 app.get("/", (req, res) => {
   res.send("Trackora API is running 🚀");
