@@ -12,10 +12,6 @@ function Footer() {
           <h3>Trackora</h3>
 
           <p>Track your job search with confidence.</p>
-
-          <span className="footer__tech">
-            Built with React, Node.js, Express & MongoDB
-          </span>
         </div>
 
         <div className="footer__social">

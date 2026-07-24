@@ -37,15 +37,6 @@
   overflow-wrap: anywhere;
 }
 
-.footer__tech {
-  display: block;
-  margin-top: 8px;
-  font-size: 12px;
-  opacity: 0.75;
-  color: var(--color-text-secondary);
-  overflow-wrap: anywhere;
-}
-
 .footer__social {
   display: flex;
   align-items: center;
