@@ -65,6 +65,24 @@ const jobSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    jobDescription: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 30000,
+    },
+    coverLetter: {
+      content: {
+        type: String,
+        trim: true,
+        default: "",
+        maxlength: 10000,
+      },
+      generatedAt: {
+        type: Date,
+        default: null,
+      },
+    },
     interview: {
       date: {
         type: Date,
@@ -91,7 +109,6 @@ const jobSchema = new mongoose.Schema(
         default: "",
       },
     },
-
     followUp: {
       date: {
         type: Date,
@@ -107,7 +124,6 @@ const jobSchema = new mongoose.Schema(
         default: "",
       },
     },
-
     documents: {
       type: [documentSchema],
       default: [],

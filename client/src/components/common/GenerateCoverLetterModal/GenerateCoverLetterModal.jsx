@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Download, Sparkles } from "lucide-react";
 
 import { generateCoverLetter } from "../../../services/aiApi";
+import { updateJob } from "../../../services/jobsApi";
 import Button from "../../ui/Button/Button";
 import CloseButton from "../../ui/CloseButton/CloseButton";
 import Textarea from "../../ui/Textarea/Textarea";
@@ -26,7 +27,7 @@ const createPdfFileName = (company, jobTitle) => {
   return `${safeName || "cover-letter"}.pdf`;
 };
 
-function GenerateCoverLetterModal({ isOpen, onClose, job }) {
+function GenerateCoverLetterModal({ isOpen, onClose, job, onJobUpdated }) {
   const [jobDescription, setJobDescription] = useState("");
   const [experience, setExperience] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
@@ -43,13 +44,13 @@ function GenerateCoverLetterModal({ isOpen, onClose, job }) {
       return;
     }
 
-    setJobDescription("");
+    setJobDescription(job?.jobDescription || "");
     setExperience("");
-    setCoverLetter("");
+    setCoverLetter(job?.coverLetter?.content || "");
     setError("");
     setIsGenerating(false);
     setIsCopied(false);
-  }, [isOpen, job?._id]);
+  }, [isOpen, job?._id, job?.jobDescription, job?.coverLetter?.content]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -97,7 +98,6 @@ function GenerateCoverLetterModal({ isOpen, onClose, job }) {
     }
 
     setError("");
-    setCoverLetter("");
     setIsCopied(false);
     setIsGenerating(true);
 
@@ -110,6 +110,23 @@ function GenerateCoverLetterModal({ isOpen, onClose, job }) {
       });
 
       setCoverLetter(data.coverLetter);
+
+      try {
+        const updatedJob = await updateJob(job._id, {
+          jobDescription: trimmedJobDescription,
+          coverLetter: {
+            content: data.coverLetter,
+          },
+        });
+
+        onJobUpdated?.(updatedJob);
+      } catch (saveError) {
+        console.error("Failed to save generated cover letter:", saveError);
+
+        setError(
+          "Your cover letter was generated, but it could not be saved. You can still copy or download it.",
+        );
+      }
     } catch (requestError) {
       setError(
         requestError.message ||

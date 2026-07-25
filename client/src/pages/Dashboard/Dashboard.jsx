@@ -181,6 +181,22 @@ function Dashboard() {
     setCoverLetterJob(job);
   };
 
+  const handleCoverLetterJobUpdated = (updatedJob) => {
+    setJobs((currentJobs) =>
+      currentJobs.map((job) => (job._id === updatedJob._id ? updatedJob : job)),
+    );
+
+    setSelectedJob((currentJob) =>
+      currentJob?._id === updatedJob._id ? updatedJob : currentJob,
+    );
+
+    setCoverLetterJob((currentJob) =>
+      currentJob?._id === updatedJob._id ? updatedJob : currentJob,
+    );
+
+    toast.success("Cover letter saved");
+  };
+
   const handleCloseCoverLetterModal = () => {
     setCoverLetterJob(null);
   };
@@ -647,12 +663,14 @@ function Dashboard() {
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
+        onJobUpdated={handleCoverLetterJobUpdated}
       />
 
       <GenerateCoverLetterModal
         isOpen={Boolean(coverLetterJob)}
         onClose={handleCloseCoverLetterModal}
         job={coverLetterJob}
+        onJobUpdated={handleCoverLetterJobUpdated}
       />
 
       <DeleteConfirmationModal

@@ -36,45 +36,46 @@ function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
           >
             {StatusIcon && <StatusIcon size={14} aria-hidden="true" />}
 
-            {currentStatus?.label}
+            {currentStatus?.label || status}
           </span>
 
           <span>{formatDate(appliedDate)}</span>
-          <span>{location}</span>
+
+          <span>{location || "Location not provided"}</span>
         </div>
+      </div>
 
-        {hasFollowUp && (
-          <div
-            className={`job-card__follow-up ${
-              isFollowUpCompleted
-                ? "job-card__follow-up_completed"
+      {hasFollowUp && (
+        <div
+          className={`job-card__follow-up ${
+            isFollowUpCompleted
+              ? "job-card__follow-up_completed"
+              : isFollowUpOverdue
+                ? "job-card__follow-up_overdue"
+                : "job-card__follow-up_upcoming"
+          }`}
+        >
+          <div className="job-card__follow-up-info">
+            {isFollowUpCompleted ? (
+              <CheckCircle size={16} aria-hidden="true" />
+            ) : (
+              <Bell size={16} aria-hidden="true" />
+            )}
+
+            <span className="job-card__follow-up-label">
+              {isFollowUpCompleted
+                ? "Follow-up completed"
                 : isFollowUpOverdue
-                  ? "job-card__follow-up_overdue"
-                  : "job-card__follow-up_upcoming"
-            }`}
-          >
-            <div className="job-card__follow-up-info">
-              {isFollowUpCompleted ? (
-                <CheckCircle size={16} aria-hidden="true" />
-              ) : (
-                <Bell size={16} aria-hidden="true" />
-              )}
-
-              <span className="job-card__follow-up-label">
-                {isFollowUpCompleted
-                  ? "Follow-up completed"
-                  : isFollowUpOverdue
-                    ? "Follow-up overdue"
-                    : "Follow-up"}
-              </span>
-            </div>
-
-            <span className="job-card__follow-up-date">
-              {formatDate(followUp.date)}
+                  ? "Follow-up overdue"
+                  : "Follow-up reminder"}
             </span>
           </div>
-        )}
-      </div>
+
+          <time className="job-card__follow-up-date" dateTime={followUp.date}>
+            {formatDate(followUp.date)}
+          </time>
+        </div>
+      )}
 
       <div className="job-card__actions">
         <Button
