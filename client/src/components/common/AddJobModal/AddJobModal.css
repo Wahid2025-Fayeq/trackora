@@ -1,0 +1,51 @@
+.add-job-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+  overflow-y: auto;
+
+  background: var(--overlay-background);
+}
+
+.add-job-modal__content {
+  position: relative;
+
+  width: 100%;
+  max-width: 500px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  padding: 32px;
+
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+
+.add-job-modal__title {
+  margin: 0 40px 24px 0;
+}
+
+@media (max-width: 600px) {
+  .add-job-modal {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .add-job-modal__content {
+    max-height: calc(100dvh - 32px);
+    padding: 24px 18px;
+    border-radius: 12px;
+  }
+
+  .add-job-modal__title {
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+  }
+}

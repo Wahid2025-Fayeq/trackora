@@ -1,0 +1,62 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  overflow-x: hidden;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+button,
+a {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.app__main {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}

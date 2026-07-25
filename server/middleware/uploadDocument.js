@@ -1,0 +1,27 @@
+const multer = require("multer");
+
+const storage = multer.memoryStorage();
+
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+
+  if (!allowedTypes.includes(file.mimetype)) {
+    return cb(new Error("Only PDF, DOC, and DOCX files are allowed."));
+  }
+
+  cb(null, true);
+};
+
+const uploadDocument = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
+
+module.exports = uploadDocument;

@@ -1,0 +1,81 @@
+.register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+}
+
+.register__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.register__title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 32px;
+  text-align: center;
+}
+
+.register__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 14px;
+  text-align: center;
+}
+
+.register__footer {
+  margin-top: 20px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.register__link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register__link:hover {
+  text-decoration: underline;
+}
+
+.register__password-feedback {
+  display: grid;
+  gap: 8px;
+}
+
+.register__password-requirements {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.register__requirement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  transition: color 0.2s ease;
+}
+.register__requirement_valid {
+  color: var(--color-success-text);
+}
+
+.register__password-strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--color-success-text);
+  font-size: 13px;
+  font-weight: 700;
+}

@@ -1,0 +1,346 @@
+.settings {
+  padding: 48px 0;
+}
+
+.settings__header {
+  max-width: 720px;
+  margin-bottom: 28px;
+}
+
+.settings__eyebrow {
+  margin: 0 0 6px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.settings__title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 36px;
+}
+
+.settings__subtitle {
+  margin: 10px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 17px;
+}
+
+.settings__preferences {
+  max-width: 760px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.settings__section + .settings__section {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+
+.settings__section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.settings__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.settings__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.settings__notification-list {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface);
+}
+
+.settings__notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.settings__notification:last-child {
+  border-bottom: none;
+}
+
+.settings__notification:hover {
+  background-color: var(--color-surface-secondary);
+}
+
+.settings__notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings__notification-title {
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.settings__notification:has(.settings__switch-input:disabled) {
+  cursor: not-allowed;
+}
+
+.settings__notification-description {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.settings__switch {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+}
+
+.settings__switch-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.settings__switch-slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background-color: var(--color-border);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.settings__switch-slider::before {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+  transition: transform 0.2s ease;
+  content: "";
+}
+
+.settings__switch-input:checked + .settings__switch-slider {
+  background-color: var(--color-primary);
+}
+
+.settings__switch-input:checked + .settings__switch-slider::before {
+  transform: translateX(20px);
+}
+
+.settings__switch-input:focus-visible + .settings__switch-slider {
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.settings__item_button:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: -3px;
+}
+
+.settings__card {
+  max-width: 760px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.settings__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.settings__item:last-child {
+  border-bottom: none;
+}
+
+.settings__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  color: var(--color-primary);
+  background-color: var(--color-surface-secondary);
+}
+
+.settings__icon_danger {
+  color: var(--color-danger);
+  background-color: var(--color-danger-background);
+}
+
+.settings__content {
+  flex: 1;
+}
+
+.settings__item-title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 17px;
+}
+
+.settings__item-title_danger {
+  color: var(--color-danger);
+}
+
+.settings__description {
+  margin: 5px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.settings__item_button {
+  width: 100%;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.settings__item_button:hover {
+  background-color: var(--color-surface-secondary);
+}
+
+.settings__item_button:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: -3px;
+}
+
+@media screen and (max-width: 700px) {
+  .settings__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .settings {
+    padding: 32px 0;
+  }
+
+  .settings__title {
+    font-size: 30px;
+  }
+
+  .settings__subtitle {
+    font-size: 15px;
+  }
+
+  .settings__preferences {
+    padding: 20px;
+  }
+
+  .settings__section + .settings__section {
+    margin-top: 28px;
+    padding-top: 28px;
+  }
+
+  .settings__section-heading {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .settings__notification {
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .settings__notification-description {
+    max-width: 240px;
+  }
+
+  .settings__switch {
+    margin-top: 2px;
+  }
+
+  .settings__actions {
+    justify-content: stretch;
+  }
+
+  .settings__actions button {
+    width: 100%;
+  }
+
+  .settings__item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .settings__preferences {
+    padding: 16px;
+  }
+
+  .settings__section-heading {
+    align-items: center;
+  }
+
+  .settings__icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .settings__notification {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .settings__notification-description {
+    max-width: none;
+  }
+
+  .settings__item {
+    gap: 12px;
+    padding: 18px 16px;
+  }
+}
