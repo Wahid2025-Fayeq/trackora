@@ -18,7 +18,7 @@ import DocumentsSection from "../DocumentsSection/DocumentsSection";
 import GenerateCoverLetterModal from "../GenerateCoverLetterModal/GenerateCoverLetterModal";
 import "./ViewJobModal.css";
 
-function ViewJobModal({ isOpen, onClose, job }) {
+function ViewJobModal({ isOpen, onClose, job, onJobUpdated }) {
   const [isGenerateCoverLetterModalOpen, setIsGenerateCoverLetterModalOpen] =
     useState(false);
 
@@ -307,8 +307,9 @@ function ViewJobModal({ isOpen, onClose, job }) {
               <h3 className="view-job-modal__section-title">AI Cover Letter</h3>
 
               <p className="view-job-modal__ai-description">
-                Generate a personalized cover letter based on this job and your
-                relevant experience.
+                {job.coverLetter?.content
+                  ? "View, copy, download, or regenerate the saved cover letter."
+                  : "Generate a personalized cover letter based on this job and your relevant experience."}
               </p>
             </div>
 
@@ -317,7 +318,10 @@ function ViewJobModal({ isOpen, onClose, job }) {
               onClick={() => setIsGenerateCoverLetterModalOpen(true)}
             >
               <Sparkles size={17} aria-hidden="true" />
-              Generate Cover Letter
+
+              {job.coverLetter?.content
+                ? "View Cover Letter"
+                : "Generate Cover Letter"}
             </Button>
           </div>
         </section>
@@ -329,6 +333,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
         isOpen={isGenerateCoverLetterModalOpen}
         onClose={() => setIsGenerateCoverLetterModalOpen(false)}
         job={job}
+        onJobUpdated={onJobUpdated}
       />
     </div>
   );
