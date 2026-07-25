@@ -1,28 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   CalendarDays,
   CheckCircle,
   Link as LinkIcon,
   MapPin,
+  Sparkles,
   Video,
 } from "lucide-react";
 
-import { statusConfig } from "../../../utils/statusConfig";
+import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
 import formatDate from "../../../utils/formatDate";
+import { statusConfig } from "../../../utils/statusConfig";
+import Button from "../../ui/Button/Button";
 import CloseButton from "../../ui/CloseButton/CloseButton";
 import DocumentsSection from "../DocumentsSection/DocumentsSection";
-import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
+import GenerateCoverLetterModal from "../GenerateCoverLetterModal/GenerateCoverLetterModal";
 import "./ViewJobModal.css";
 
 function ViewJobModal({ isOpen, onClose, job }) {
+  const [isGenerateCoverLetterModalOpen, setIsGenerateCoverLetterModalOpen] =
+    useState(false);
+
   useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleEsc = (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !isGenerateCoverLetterModalOpen) {
         onClose();
       }
     };
@@ -32,10 +38,19 @@ function ViewJobModal({ isOpen, onClose, job }) {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, isGenerateCoverLetterModalOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsGenerateCoverLetterModalOpen(false);
+    }
+  }, [isOpen]);
 
   const handleOverlayClick = (event) => {
-    if (event.target === event.currentTarget) {
+    if (
+      event.target === event.currentTarget &&
+      !isGenerateCoverLetterModalOpen
+    ) {
       onClose();
     }
   };
@@ -58,6 +73,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
   const hasFollowUp = Boolean(
     job.followUp?.date || job.followUp?.notes || job.followUp?.completed,
   );
+
   const isFollowUpCompleted = Boolean(job.followUp?.completed);
 
   const formattedInterviewDate = (() => {
@@ -95,6 +111,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
         aria-modal="true"
         aria-labelledby="view-job-modal-title"
         aria-describedby="view-job-modal-description"
+        aria-hidden={isGenerateCoverLetterModalOpen ? "true" : undefined}
       >
         <CloseButton onClick={onClose} />
 
@@ -119,6 +136,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
               className={`view-job-modal__status view-job-modal__status_${currentStatus?.className}`}
             >
               {StatusIcon && <StatusIcon size={14} aria-hidden="true" />}
+
               {currentStatus?.label || job.status}
             </span>
           </div>
@@ -263,7 +281,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
               </div>
             </div>
 
-            {job.followUp.notes && (
+            {job.followUp?.notes && (
               <div className="view-job-modal__follow-up-notes">
                 <span className="view-job-modal__label">Follow-up Notes</span>
 
@@ -283,8 +301,35 @@ function ViewJobModal({ isOpen, onClose, job }) {
           </p>
         </section>
 
+        <section className="view-job-modal__ai">
+          <div className="view-job-modal__ai-content">
+            <div>
+              <h3 className="view-job-modal__section-title">AI Cover Letter</h3>
+
+              <p className="view-job-modal__ai-description">
+                Generate a personalized cover letter based on this job and your
+                relevant experience.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              onClick={() => setIsGenerateCoverLetterModalOpen(true)}
+            >
+              <Sparkles size={17} aria-hidden="true" />
+              Generate Cover Letter
+            </Button>
+          </div>
+        </section>
+
         <DocumentsSection jobId={job._id} />
       </div>
+
+      <GenerateCoverLetterModal
+        isOpen={isGenerateCoverLetterModalOpen}
+        onClose={() => setIsGenerateCoverLetterModalOpen(false)}
+        job={job}
+      />
     </div>
   );
 }

@@ -13,6 +13,7 @@ import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import StatusChart from "../../components/common/StatusChart/StatusChart";
 import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
+import GenerateCoverLetterModal from "../../components/common/GenerateCoverLetterModal/GenerateCoverLetterModal";
 
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
@@ -135,6 +136,7 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [coverLetterJob, setCoverLetterJob] = useState(null);
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -173,6 +175,14 @@ function Dashboard() {
 
   const handleCloseAddJobModal = () => {
     setIsAddJobModalOpen(false);
+  };
+
+  const handleOpenCoverLetterModal = (job) => {
+    setCoverLetterJob(job);
+  };
+
+  const handleCloseCoverLetterModal = () => {
+    setCoverLetterJob(null);
   };
 
   const handleViewJobClick = (job) => {
@@ -598,6 +608,7 @@ function Dashboard() {
                   onView={handleViewJobClick}
                   onEdit={handleEditJobClick}
                   onDelete={handleDeleteJob}
+                  onGenerateCoverLetter={handleOpenCoverLetterModal}
                 />
               ))}
             </div>
@@ -636,6 +647,12 @@ function Dashboard() {
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
+      />
+
+      <GenerateCoverLetterModal
+        isOpen={Boolean(coverLetterJob)}
+        onClose={handleCloseCoverLetterModal}
+        job={coverLetterJob}
       />
 
       <DeleteConfirmationModal

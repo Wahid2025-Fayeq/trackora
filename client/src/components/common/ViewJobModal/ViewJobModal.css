@@ -247,6 +247,36 @@
   font-size: 14px;
 }
 
+.view-job-modal__ai {
+  padding: 18px;
+  margin-top: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-surface-secondary);
+}
+
+.view-job-modal__ai-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.view-job-modal__ai-description {
+  max-width: 480px;
+  margin: -8px 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.view-job-modal__ai .button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .view-job-modal__meeting-link:hover {
     text-decoration-thickness: 2px;
@@ -282,5 +312,19 @@
 
   .view-job-modal__title {
     font-size: 22px;
+  }
+
+  .view-job-modal__ai {
+    padding: 14px;
+  }
+
+  .view-job-modal__ai-content {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .view-job-modal__ai .button {
+    width: 100%;
   }
 }
