@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, MapPin, Sparkles, SearchX, Video } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { CalendarDays, MapPin, SearchX, Sparkles, Video } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
 import DeleteConfirmationModal from "../../components/common/DeleteConfirmationModal/DeleteConfirmationModal";
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
+import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
 import JobCard from "../../components/common/JobCard";
+import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
-import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
-import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import StatusChart from "../../components/common/StatusChart/StatusChart";
-import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
-
-import { useNavigate } from "react-router-dom";
+import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
@@ -30,13 +29,12 @@ import {
   updateJob,
 } from "../../services/jobsApi";
 
+import getFollowUpReminders from "../../utils/followUpReminders";
 import {
   getJobAnalytics,
   getMonthlyApplicationsData,
   getStatusChartData,
 } from "../../utils/jobAnalytics";
-
-import getFollowUpReminders from "../../utils/followUpReminders";
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
@@ -61,7 +59,6 @@ const getInterviewCountdown = (date) => {
   }
 
   const now = new Date();
-
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const interviewDay = new Date(
@@ -111,13 +108,10 @@ function Dashboard() {
   const notifications = {
     interviewReminders:
       currentUser?.preferences?.notifications?.interviewReminders ?? true,
-
     followUpReminders:
       currentUser?.preferences?.notifications?.followUpReminders ?? true,
-
     applicationUpdates:
       currentUser?.preferences?.notifications?.applicationUpdates ?? true,
-
     emailNotifications:
       currentUser?.preferences?.notifications?.emailNotifications ?? false,
   };
@@ -425,13 +419,111 @@ function Dashboard() {
           <StatsCard title="Offer" value={offerJobs} />
         </section>
 
+        <section className="dashboard__jobs">
+          <h2 className="dashboard__section-title">Recent Applications</h2>
+
+          {jobs.length > 0 && (
+            <>
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+
+              <div className="dashboard__filters">
+                <Select
+                  label="Filter"
+                  name="statusFilter"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                  options={filterOptions}
+                />
+
+                <Select
+                  label="Sort By"
+                  name="sortBy"
+                  value={sortBy}
+                  onChange={(event) => setSortBy(event.target.value)}
+                  options={sortOptions}
+                />
+              </div>
+            </>
+          )}
+
+          {isLoading ? (
+            <Loader text="Loading jobs..." />
+          ) : error ? (
+            <div className="dashboard__error">
+              <h3>Something went wrong</h3>
+              <p>{error}</p>
+
+              <Button variant="secondary" onClick={loadJobs}>
+                Try Again
+              </Button>
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="dashboard__empty-state">
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
+
+              <h3 className="dashboard__empty-title">Start your job search</h3>
+
+              <p className="dashboard__empty-text">
+                Add your first opportunity or create a tailored cover letter
+                before applying.
+              </p>
+
+              <div className="dashboard__empty-actions">
+                <Button onClick={handleOpenAddJobModal}>
+                  Add Your First Job
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate("/cover-letter")}
+                >
+                  <Sparkles size={17} aria-hidden="true" />
+                  Generate Cover Letter
+                </Button>
+              </div>
+            </div>
+          ) : sortedJobs.length > 0 ? (
+            <div className="dashboard__job-list">
+              {sortedJobs.map((job) => (
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  onView={handleViewJobClick}
+                  onEdit={handleEditJobClick}
+                  onDelete={handleDeleteJob}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard__empty-state">
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
+
+              <h3 className="dashboard__empty-title">No matching jobs</h3>
+
+              <p className="dashboard__empty-text">
+                Try a different job title, company, location, or filter.
+              </p>
+            </div>
+          )}
+        </section>
+
         <section className="dashboard__analytics">
           <h2 className="dashboard__section-title">Job Search Analytics</h2>
 
           <div className="dashboard__analytics-summary">
             <div>
               <span className="dashboard__analytics-label">Total Jobs</span>
-
               <strong className="dashboard__analytics-value">
                 {totalJobs}
               </strong>
@@ -439,7 +531,6 @@ function Dashboard() {
 
             <div>
               <span className="dashboard__analytics-label">Active Jobs</span>
-
               <strong className="dashboard__analytics-value">
                 {activeJobs}
               </strong>
@@ -567,83 +658,6 @@ function Dashboard() {
             )}
           </section>
         )}
-
-        <section className="dashboard__jobs">
-          <h2 className="dashboard__section-title">Recent Applications</h2>
-
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-          <div className="dashboard__filters">
-            <Select
-              label="Filter"
-              name="statusFilter"
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-              options={filterOptions}
-            />
-
-            <Select
-              label="Sort By"
-              name="sortBy"
-              value={sortBy}
-              onChange={(event) => setSortBy(event.target.value)}
-              options={sortOptions}
-            />
-          </div>
-
-          {isLoading ? (
-            <Loader text="Loading jobs..." />
-          ) : error ? (
-            <div className="dashboard__error">
-              <h3>Something went wrong</h3>
-              <p>{error}</p>
-
-              <Button variant="secondary" onClick={loadJobs}>
-                Try Again
-              </Button>
-            </div>
-          ) : jobs.length === 0 ? (
-            <div className="dashboard__empty-state">
-              <SearchX
-                className="dashboard__empty-icon"
-                size={40}
-                aria-hidden="true"
-              />
-
-              <h3 className="dashboard__empty-title">No jobs yet</h3>
-
-              <p className="dashboard__empty-text">
-                Add your first job application to get started.
-              </p>
-            </div>
-          ) : sortedJobs.length > 0 ? (
-            <div className="dashboard__job-list">
-              {sortedJobs.map((job) => (
-                <JobCard
-                  key={job._id}
-                  job={job}
-                  onView={handleViewJobClick}
-                  onEdit={handleEditJobClick}
-                  onDelete={handleDeleteJob}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="dashboard__empty-state">
-              <SearchX
-                className="dashboard__empty-icon"
-                size={40}
-                aria-hidden="true"
-              />
-
-              <h3 className="dashboard__empty-title">No matching jobs</h3>
-
-              <p className="dashboard__empty-text">
-                Try a different job title, company, location, or filter.
-              </p>
-            </div>
-          )}
-        </section>
       </Container>
 
       <AddJobModal
