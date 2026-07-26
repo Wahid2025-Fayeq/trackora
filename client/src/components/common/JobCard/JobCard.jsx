@@ -5,7 +5,7 @@ import formatDate from "../../../utils/formatDate";
 import { statusConfig } from "../../../utils/statusConfig";
 import "./JobCard.css";
 
-function JobCard({ job, onView, onEdit, onDelete }) {
+function JobCard({ job, onView, onEdit, onDelete, dateFormat = "MM/DD/YYYY" }) {
   const { title, company, status, appliedDate, location, followUp } = job;
 
   const currentStatus = statusConfig[status];
@@ -39,7 +39,7 @@ function JobCard({ job, onView, onEdit, onDelete }) {
             {currentStatus?.label || status}
           </span>
 
-          <span>{formatDate(appliedDate)}</span>
+          <span>{formatDate(appliedDate, dateFormat)}</span>
 
           <span>{location || "Location not provided"}</span>
         </div>
@@ -72,7 +72,7 @@ function JobCard({ job, onView, onEdit, onDelete }) {
           </div>
 
           <time className="job-card__follow-up-date" dateTime={followUp.date}>
-            {formatDate(followUp.date)}
+            {formatDate(followUp.date, dateFormat)}
           </time>
         </div>
       )}

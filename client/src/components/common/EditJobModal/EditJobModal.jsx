@@ -6,7 +6,13 @@ import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
 
 import "./EditJobModal.css";
 
-function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
+function EditJobModal({
+  isOpen,
+  onClose,
+  job,
+  onUpdateJob,
+  dateFormat = "MM/DD/YYYY",
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useBodyScrollLock(isOpen);
@@ -74,6 +80,7 @@ function EditJobModal({ isOpen, onClose, job, onUpdateJob }) {
 
         <JobForm
           initialValues={job}
+          dateFormat={dateFormat}
           onSubmit={handleSubmit}
           submitButtonText="Save Changes"
           isSubmitting={isSubmitting}

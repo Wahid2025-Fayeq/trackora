@@ -19,6 +19,7 @@ import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
 import Loader from "../../components/ui/Loader/Loader";
 import Select from "../../components/ui/Select/Select";
+import formatDate from "../../utils/formatDate";
 
 import useAuth from "../../hooks/useAuth";
 
@@ -51,7 +52,7 @@ const getMeetingLink = (meetingLink) => {
     : `https://${meetingLink}`;
 };
 
-const getInterviewCountdown = (date) => {
+const getInterviewCountdown = (date, dateFormat) => {
   const interviewDate = new Date(date);
 
   if (Number.isNaN(interviewDate.getTime())) {
@@ -71,11 +72,7 @@ const getInterviewCountdown = (date) => {
     (interviewDay.getTime() - today.getTime()) / MILLISECONDS_PER_DAY,
   );
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(interviewDate);
+  const formattedDate = formatDate(interviewDate, dateFormat);
 
   const formattedTime = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
@@ -105,6 +102,8 @@ function Dashboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
+  const dateFormat = currentUser?.preferences?.dateFormat || "MM/DD/YYYY";
+
   const notifications = {
     interviewReminders:
       currentUser?.preferences?.notifications?.interviewReminders ?? true,
@@ -130,7 +129,9 @@ function Dashboard() {
   const [jobToDelete, setJobToDelete] = useState(null);
 
   const [statusFilter, setStatusFilter] = useState("All");
-  const [sortBy, setSortBy] = useState("Newest");
+  const [sortBy, setSortBy] = useState(
+    currentUser?.preferences?.defaultSort || "newest",
+  );
   const [isDeleting, setIsDeleting] = useState(false);
 
   const loadJobs = () => {
@@ -163,6 +164,10 @@ function Dashboard() {
   useEffect(() => {
     loadJobs();
   }, []);
+
+  useEffect(() => {
+    setSortBy(currentUser?.preferences?.defaultSort || "newest");
+  }, [currentUser?.preferences?.defaultSort]);
 
   const handleOpenAddJobModal = () => {
     setIsAddJobModalOpen(true);
@@ -322,16 +327,16 @@ function Dashboard() {
 
   const sortedJobs = [...filteredJobs].sort((a, b) => {
     switch (sortBy) {
-      case "Oldest":
+      case "oldest":
         return new Date(a.appliedDate) - new Date(b.appliedDate);
 
-      case "Company":
+      case "company":
         return a.company.localeCompare(b.company);
 
-      case "Title":
+      case "title":
         return a.title.localeCompare(b.title);
 
-      case "Newest":
+      case "newest":
       default:
         return new Date(b.appliedDate) - new Date(a.appliedDate);
     }
@@ -498,6 +503,7 @@ function Dashboard() {
                   onView={handleViewJobClick}
                   onEdit={handleEditJobClick}
                   onDelete={handleDeleteJob}
+                  dateFormat={dateFormat}
                 />
               ))}
             </div>
@@ -568,6 +574,7 @@ function Dashboard() {
             upcoming={upcoming}
             onView={handleViewJobClick}
             onComplete={handleCompleteFollowUp}
+            dateFormat={dateFormat}
           />
         )}
 
@@ -599,7 +606,10 @@ function Dashboard() {
                           <CalendarDays size={17} aria-hidden="true" />
 
                           <time dateTime={job.interview.date}>
-                            {getInterviewCountdown(job.interview.date)}
+                            {getInterviewCountdown(
+                              job.interview.date,
+                              dateFormat,
+                            )}
                           </time>
                         </div>
 
@@ -664,6 +674,8 @@ function Dashboard() {
         isOpen={isAddJobModalOpen}
         onClose={handleCloseAddJobModal}
         onAddJob={handleAddJob}
+        defaultStatus={currentUser?.preferences?.defaultStatus || "Applied"}
+        dateFormat={dateFormat}
       />
 
       <EditJobModal
@@ -671,12 +683,14 @@ function Dashboard() {
         onClose={handleCloseEditJobModal}
         job={selectedJob}
         onUpdateJob={handleUpdateJob}
+        dateFormat={dateFormat}
       />
 
       <ViewJobModal
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
+        dateFormat={dateFormat}
       />
 
       <DeleteConfirmationModal
