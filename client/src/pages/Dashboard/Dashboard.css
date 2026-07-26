@@ -114,6 +114,22 @@
   font-size: 14px;
 }
 
+.dashboard__empty-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.dashboard__empty-actions .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .dashboard__section-title {
   margin-bottom: 20px;
   color: var(--color-text);
@@ -426,5 +442,14 @@
   .dashboard__upcoming-actions .button,
   .dashboard__join-button {
     flex: 1;
+  }
+
+  .dashboard__empty-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboard__empty-actions .button {
+    width: 100%;
   }
 }
