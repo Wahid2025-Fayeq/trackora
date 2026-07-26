@@ -17,7 +17,7 @@ import DocumentsSection from "../DocumentsSection/DocumentsSection";
 
 import "./ViewJobModal.css";
 
-function ViewJobModal({ isOpen, onClose, job }) {
+function ViewJobModal({ isOpen, onClose, job, dateFormat = "MM/DD/YYYY" }) {
   useBodyScrollLock(isOpen);
 
   useEffect(() => {
@@ -74,10 +74,12 @@ function ViewJobModal({ isOpen, onClose, job }) {
       return "Date unavailable";
     }
 
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
+    const formattedTime = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
     }).format(interviewDate);
+
+    return `${formatDate(interviewDate, dateFormat)} at ${formattedTime}`;
   })();
 
   const meetingLink = job.interview?.meetingLink
@@ -131,7 +133,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
             <span className="view-job-modal__label">Application Date</span>
 
             <span className="view-job-modal__value">
-              {formatDate(job.appliedDate)}
+              {formatDate(job.appliedDate, dateFormat)}
             </span>
           </div>
 
@@ -239,7 +241,7 @@ function ViewJobModal({ isOpen, onClose, job }) {
                   <span className="view-job-modal__label">Follow-up Date</span>
 
                   <p className="view-job-modal__value">
-                    {formatDate(job.followUp.date)}
+                    {formatDate(job.followUp.date, dateFormat)}
                   </p>
                 </div>
               </div>

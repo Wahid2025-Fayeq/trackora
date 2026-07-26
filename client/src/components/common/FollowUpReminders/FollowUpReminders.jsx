@@ -5,7 +5,14 @@ import formatDate from "../../../utils/formatDate";
 
 import "./FollowUpReminders.css";
 
-function ReminderGroup({ title, jobs, className, onView, onComplete }) {
+function ReminderGroup({
+  title,
+  jobs,
+  className,
+  onView,
+  onComplete,
+  dateFormat,
+}) {
   if (jobs.length === 0) {
     return null;
   }
@@ -27,7 +34,7 @@ function ReminderGroup({ title, jobs, className, onView, onComplete }) {
               <div className="follow-up-reminders__date">
                 <CalendarDays size={15} />
 
-                <span>{formatDate(job.followUp.date)}</span>
+                <span>{formatDate(job.followUp.date, dateFormat)}</span>
               </div>
             </div>
 
@@ -58,6 +65,7 @@ function FollowUpReminders({
   upcoming,
   onView,
   onComplete,
+  dateFormat = "MM/DD/YYYY",
 }) {
   const hasReminders = overdue.length || dueToday.length || upcoming.length;
 
@@ -83,6 +91,7 @@ function FollowUpReminders({
         className="follow-up-reminders__heading_overdue"
         onView={onView}
         onComplete={onComplete}
+        dateFormat={dateFormat}
       />
 
       <ReminderGroup
@@ -91,6 +100,7 @@ function FollowUpReminders({
         className="follow-up-reminders__heading_today"
         onView={onView}
         onComplete={onComplete}
+        dateFormat={dateFormat}
       />
 
       <ReminderGroup
@@ -99,6 +109,7 @@ function FollowUpReminders({
         className="follow-up-reminders__heading_upcoming"
         onView={onView}
         onComplete={onComplete}
+        dateFormat={dateFormat}
       />
     </section>
   );

@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
-import JobForm from "../JobForm/JobForm";
-import CloseButton from "../../ui/CloseButton/CloseButton";
+
 import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
+import CloseButton from "../../ui/CloseButton/CloseButton";
+import JobForm from "../JobForm/JobForm";
 
 import "./AddJobModal.css";
 
-function AddJobModal({ isOpen, onClose, onAddJob }) {
+function AddJobModal({
+  isOpen,
+  onClose,
+  onAddJob,
+  defaultStatus = "Applied",
+  dateFormat = "MM/DD/YYYY",
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   useBodyScrollLock(isOpen);
 
   const handleSubmit = (formData) => {
@@ -26,8 +34,8 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
       return;
     }
 
-    const handleEsc = (e) => {
-      if (e.key === "Escape" && !isSubmitting) {
+    const handleEsc = (event) => {
+      if (event.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
@@ -68,6 +76,8 @@ function AddJobModal({ isOpen, onClose, onAddJob }) {
         </h2>
 
         <JobForm
+          defaultStatus={defaultStatus}
+          dateFormat={dateFormat}
           onSubmit={handleSubmit}
           submitButtonText="Add Job"
           isSubmitting={isSubmitting}
