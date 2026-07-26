@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, MapPin, SearchX, Video } from "lucide-react";
+import { CalendarDays, MapPin, Sparkles, SearchX, Video } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
@@ -13,7 +13,8 @@ import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
 import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
 import StatusChart from "../../components/common/StatusChart/StatusChart";
 import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
-import GenerateCoverLetterModal from "../../components/common/GenerateCoverLetterModal/GenerateCoverLetterModal";
+
+import { useNavigate } from "react-router-dom";
 
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
@@ -104,6 +105,7 @@ const getInterviewCountdown = (date) => {
 };
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
 
   const notifications = {
@@ -136,7 +138,6 @@ function Dashboard() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [coverLetterJob, setCoverLetterJob] = useState(null);
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -175,30 +176,6 @@ function Dashboard() {
 
   const handleCloseAddJobModal = () => {
     setIsAddJobModalOpen(false);
-  };
-
-  const handleOpenCoverLetterModal = (job) => {
-    setCoverLetterJob(job);
-  };
-
-  const handleCoverLetterJobUpdated = (updatedJob) => {
-    setJobs((currentJobs) =>
-      currentJobs.map((job) => (job._id === updatedJob._id ? updatedJob : job)),
-    );
-
-    setSelectedJob((currentJob) =>
-      currentJob?._id === updatedJob._id ? updatedJob : currentJob,
-    );
-
-    setCoverLetterJob((currentJob) =>
-      currentJob?._id === updatedJob._id ? updatedJob : currentJob,
-    );
-
-    toast.success("Cover letter saved");
-  };
-
-  const handleCloseCoverLetterModal = () => {
-    setCoverLetterJob(null);
   };
 
   const handleViewJobClick = (job) => {
@@ -417,6 +394,30 @@ function Dashboard() {
           <Button onClick={handleOpenAddJobModal}>Add Job</Button>
         </section>
 
+        <section className="dashboard__cover-letter">
+          <div className="dashboard__cover-letter-icon">
+            <Sparkles size={28} aria-hidden="true" />
+          </div>
+
+          <div className="dashboard__cover-letter-content">
+            <p className="dashboard__cover-letter-label">AI-powered tool</p>
+
+            <h2 className="dashboard__cover-letter-title">
+              Create a tailored cover letter
+            </h2>
+
+            <p className="dashboard__cover-letter-description">
+              Generate a personalized cover letter for any opportunity—even
+              before adding the job to Trackora.
+            </p>
+          </div>
+
+          <Button onClick={() => navigate("/cover-letter")}>
+            <Sparkles size={17} aria-hidden="true" />
+            Generate Cover Letter
+          </Button>
+        </section>
+
         <section className="dashboard__stats">
           <StatsCard title="Applied" value={appliedJobs} />
           <StatsCard title="Interview" value={interviewJobs} />
@@ -624,7 +625,6 @@ function Dashboard() {
                   onView={handleViewJobClick}
                   onEdit={handleEditJobClick}
                   onDelete={handleDeleteJob}
-                  onGenerateCoverLetter={handleOpenCoverLetterModal}
                 />
               ))}
             </div>
@@ -663,14 +663,6 @@ function Dashboard() {
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
-        onJobUpdated={handleCoverLetterJobUpdated}
-      />
-
-      <GenerateCoverLetterModal
-        isOpen={Boolean(coverLetterJob)}
-        onClose={handleCloseCoverLetterModal}
-        job={coverLetterJob}
-        onJobUpdated={handleCoverLetterJobUpdated}
       />
 
       <DeleteConfirmationModal

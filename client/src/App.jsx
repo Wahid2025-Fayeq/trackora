@@ -14,6 +14,7 @@ import Profile from "./pages/Profile/Profile";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Settings from "./pages/Settings/Settings";
+import CoverLetter from "./pages/CoverLetter/CoverLetter";
 import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
@@ -30,6 +31,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/cover-letter"
+            element={
+              <ProtectedRoute>
+                <CoverLetter />
               </ProtectedRoute>
             }
           />
