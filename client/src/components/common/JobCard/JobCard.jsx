@@ -1,11 +1,11 @@
-import { Bell, CheckCircle, Sparkles } from "lucide-react";
+import { Bell, CheckCircle } from "lucide-react";
 
 import Button from "../../ui/Button";
 import formatDate from "../../../utils/formatDate";
 import { statusConfig } from "../../../utils/statusConfig";
 import "./JobCard.css";
 
-function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
+function JobCard({ job, onView, onEdit, onDelete }) {
   const { title, company, status, appliedDate, location, followUp } = job;
 
   const currentStatus = statusConfig[status];
@@ -85,16 +85,6 @@ function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
           onClick={handleViewClick}
         >
           View
-        </Button>
-
-        <Button
-          type="button"
-          size="small"
-          variant="secondary"
-          onClick={() => onGenerateCoverLetter(job)}
-        >
-          <Sparkles size={15} aria-hidden="true" />
-          Cover Letter
         </Button>
 
         <Button

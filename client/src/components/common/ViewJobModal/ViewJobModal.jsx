@@ -1,34 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Bell,
   CalendarDays,
   CheckCircle,
   Link as LinkIcon,
   MapPin,
-  Sparkles,
   Video,
 } from "lucide-react";
 
 import useBodyScrollLock from "../../../hooks/useBodyScrollLock";
 import formatDate from "../../../utils/formatDate";
 import { statusConfig } from "../../../utils/statusConfig";
-import Button from "../../ui/Button/Button";
+
 import CloseButton from "../../ui/CloseButton/CloseButton";
 import DocumentsSection from "../DocumentsSection/DocumentsSection";
-import GenerateCoverLetterModal from "../GenerateCoverLetterModal/GenerateCoverLetterModal";
+
 import "./ViewJobModal.css";
 
-function ViewJobModal({ isOpen, onClose, job, onJobUpdated }) {
-  const [isGenerateCoverLetterModalOpen, setIsGenerateCoverLetterModalOpen] =
-    useState(false);
-
+function ViewJobModal({ isOpen, onClose, job }) {
   useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleEsc = (event) => {
-      if (event.key === "Escape" && !isGenerateCoverLetterModalOpen) {
+      if (event.key === "Escape") {
         onClose();
       }
     };
@@ -38,19 +34,10 @@ function ViewJobModal({ isOpen, onClose, job, onJobUpdated }) {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, [isOpen, isGenerateCoverLetterModalOpen, onClose]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsGenerateCoverLetterModalOpen(false);
-    }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   const handleOverlayClick = (event) => {
-    if (
-      event.target === event.currentTarget &&
-      !isGenerateCoverLetterModalOpen
-    ) {
+    if (event.target === event.currentTarget) {
       onClose();
     }
   };
@@ -111,7 +98,6 @@ function ViewJobModal({ isOpen, onClose, job, onJobUpdated }) {
         aria-modal="true"
         aria-labelledby="view-job-modal-title"
         aria-describedby="view-job-modal-description"
-        aria-hidden={isGenerateCoverLetterModalOpen ? "true" : undefined}
       >
         <CloseButton onClick={onClose} />
 
@@ -301,40 +287,8 @@ function ViewJobModal({ isOpen, onClose, job, onJobUpdated }) {
           </p>
         </section>
 
-        <section className="view-job-modal__ai">
-          <div className="view-job-modal__ai-content">
-            <div>
-              <h3 className="view-job-modal__section-title">AI Cover Letter</h3>
-
-              <p className="view-job-modal__ai-description">
-                {job.coverLetter?.content
-                  ? "View, copy, download, or regenerate the saved cover letter."
-                  : "Generate a personalized cover letter based on this job and your relevant experience."}
-              </p>
-            </div>
-
-            <Button
-              type="button"
-              onClick={() => setIsGenerateCoverLetterModalOpen(true)}
-            >
-              <Sparkles size={17} aria-hidden="true" />
-
-              {job.coverLetter?.content
-                ? "View Cover Letter"
-                : "Generate Cover Letter"}
-            </Button>
-          </div>
-        </section>
-
         <DocumentsSection jobId={job._id} />
       </div>
-
-      <GenerateCoverLetterModal
-        isOpen={isGenerateCoverLetterModalOpen}
-        onClose={() => setIsGenerateCoverLetterModalOpen(false)}
-        job={job}
-        onJobUpdated={onJobUpdated}
-      />
     </div>
   );
 }
