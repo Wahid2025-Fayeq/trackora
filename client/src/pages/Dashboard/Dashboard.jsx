@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarDays, MapPin, SearchX, Sparkles, Video } from "lucide-react";
 import toast from "react-hot-toast";
@@ -9,12 +9,10 @@ import DeleteConfirmationModal from "../../components/common/DeleteConfirmationM
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
 import JobCard from "../../components/common/JobCard";
-import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
+import JobCardSkeleton from "../../components/common/JobCardSkeleton/JobCardSkeleton";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
-import StatusChart from "../../components/common/StatusChart/StatusChart";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
-
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
 import Loader from "../../components/ui/Loader/Loader";
@@ -39,6 +37,15 @@ import {
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
+
+const MonthlyApplicationsChart = lazy(
+  () =>
+    import("../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart"),
+);
+
+const StatusChart = lazy(
+  () => import("../../components/common/StatusChart/StatusChart"),
+);
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -455,7 +462,15 @@ function Dashboard() {
           )}
 
           {isLoading ? (
-            <Loader text="Loading jobs..." />
+            <div
+              className="dashboard__job-list"
+              role="status"
+              aria-label="Loading jobs"
+            >
+              {Array.from({ length: 3 }, (_, index) => (
+                <JobCardSkeleton key={index} />
+              ))}
+            </div>
           ) : error ? (
             <div className="dashboard__error">
               <h3>Something went wrong</h3>
@@ -562,8 +577,10 @@ function Dashboard() {
           </div>
 
           <section className="dashboard__charts">
-            <StatusChart data={statusChartData} />
-            <MonthlyApplicationsChart data={monthlyApplicationsData} />
+            <Suspense fallback={<Loader />}>
+              <StatusChart data={statusChartData} />
+              <MonthlyApplicationsChart data={monthlyApplicationsData} />
+            </Suspense>
           </section>
         </section>
 

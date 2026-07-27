@@ -358,6 +358,11 @@
   line-height: 1.5;
 }
 
+.dashboard__job-list {
+  display: grid;
+  gap: 16px;
+}
+
 @media (max-width: 900px) {
   .dashboard__cover-letter {
     grid-template-columns: auto minmax(0, 1fr);
