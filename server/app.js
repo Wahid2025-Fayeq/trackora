@@ -11,8 +11,18 @@ const aiRoutes = require("./routes/ai");
 
 const app = express();
 
-app.use(cors());
+const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+
+app.use(
+  cors({
+    origin: clientUrl,
+  }),
+);
 app.use(express.json());
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
