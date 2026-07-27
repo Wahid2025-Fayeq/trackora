@@ -86,6 +86,7 @@ function Navbar() {
           <>
             <NavLink
               to="/"
+              end
               className={navLinkClass}
               onClick={handleMenuLinkClick}
             >
@@ -98,6 +99,14 @@ function Navbar() {
               onClick={handleMenuLinkClick}
             >
               Dashboard
+            </NavLink>
+
+            <NavLink
+              to="/cover-letter"
+              className={navLinkClass}
+              onClick={handleMenuLinkClick}
+            >
+              Cover Letter
             </NavLink>
 
             <div className="navbar__user-menu" ref={userMenuRef}>
@@ -186,6 +195,7 @@ function Navbar() {
           <>
             <NavLink
               to="/"
+              end
               className={navLinkClass}
               onClick={handleMenuLinkClick}
             >
