@@ -1,5 +1,3 @@
-// client/src/test/setup.js
-
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
