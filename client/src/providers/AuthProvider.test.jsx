@@ -1,5 +1,3 @@
-/**test*/
-
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useContext } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
