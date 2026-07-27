@@ -1,0 +1,83 @@
+.job-card_skeleton {
+  pointer-events: none;
+}
+
+.job-card__skeleton-line,
+.job-card__skeleton-pill,
+.job-card__skeleton-button,
+.job-card__skeleton-follow-up {
+  border-radius: 6px;
+  background-color: var(--color-surface-secondary);
+  animation: job-card-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.job-card__skeleton-line {
+  height: 14px;
+}
+
+.job-card__skeleton-line_title {
+  width: min(70%, 320px);
+  height: 22px;
+}
+
+.job-card__skeleton-line_company {
+  width: min(45%, 200px);
+  margin-top: 10px;
+}
+
+.job-card__skeleton-line_meta {
+  width: 140px;
+}
+
+.job-card__skeleton-pill {
+  width: 82px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.job-card__skeleton-button {
+  width: 74px;
+  height: 34px;
+}
+
+.job-card__skeleton-follow-up {
+  grid-area: follow-up;
+  width: 100%;
+  height: 42px;
+}
+
+@keyframes job-card-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .job-card__skeleton-line,
+  .job-card__skeleton-pill,
+  .job-card__skeleton-button,
+  .job-card__skeleton-follow-up {
+    animation: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .job-card__skeleton-button {
+    width: 100%;
+  }
+
+  .job-card_skeleton .job-card__skeleton-button:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .job-card_skeleton .job-card__skeleton-button:last-child {
+    grid-column: auto;
+  }
+}

@@ -9,6 +9,7 @@ import DeleteConfirmationModal from "../../components/common/DeleteConfirmationM
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
 import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
 import JobCard from "../../components/common/JobCard";
+import JobCardSkeleton from "../../components/common/JobCardSkeleton/JobCardSkeleton";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
@@ -461,7 +462,15 @@ function Dashboard() {
           )}
 
           {isLoading ? (
-            <Loader text="Loading jobs..." />
+            <div
+              className="dashboard__job-list"
+              role="status"
+              aria-label="Loading jobs"
+            >
+              {Array.from({ length: 3 }, (_, index) => (
+                <JobCardSkeleton key={index} />
+              ))}
+            </div>
           ) : error ? (
             <div className="dashboard__error">
               <h3>Something went wrong</h3>
