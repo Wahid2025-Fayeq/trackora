@@ -37,8 +37,12 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 
-connectDB();
+if (require.main === module) {
+  connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
