@@ -88,7 +88,8 @@ jobs:
         shell: bash
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "${{ secrets.VM_SSH_PRIVATE_KEY }}" \
+          printf '%s' "${{ secrets.VM_SSH_PRIVATE_KEY_B64 }}" \
+            | base64 --decode \
             > ~/.ssh/trackora_deploy
           chmod 600 ~/.ssh/trackora_deploy
           printf '%s\n' "${{ secrets.VM_SSH_KNOWN_HOSTS }}" \
