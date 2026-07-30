@@ -63,6 +63,17 @@ jobs:
 
       - name: Test server
         working-directory: server
+        env:
+          CLIENT_URL: http://localhost:3000
+          MONGODB_URI: mongodb://127.0.0.1:27017/trackora_test
+          JWT_SECRET: ci-test-jwt-secret
+          CLOUDINARY_CLOUD_NAME: ci-test-cloud-name
+          CLOUDINARY_API_KEY: ci-test-cloudinary-key
+          CLOUDINARY_API_SECRET: ci-test-cloudinary-secret
+          RESEND_API_KEY: ci-test-resend-key
+          RESEND_FROM_EMAIL: "Trackora <test@example.com>"
+          OPENAI_API_KEY: ci-test-openai-key
+          OPENAI_MODEL: gpt-5-mini
         run: npm test
 
   deploy:
