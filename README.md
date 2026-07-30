@@ -395,12 +395,12 @@ The workflow:
 
 Required GitHub repository secrets:
 
-| Secret               | Purpose                          |
-| -------------------- | -------------------------------- |
-| `VM_HOST`            | Google Cloud VM external IP      |
-| `VM_USER`            | VM deployment username           |
-| `VM_SSH_PRIVATE_KEY` | Dedicated deployment private key |
-| `VM_SSH_KNOWN_HOSTS` | Verified SSH host-key entries    |
+| Secret                   | Purpose                                         |
+| ------------------------ | ----------------------------------------------- |
+| `VM_HOST`                | Google Cloud VM external IP                     |
+| `VM_USER`                | VM deployment username                          |
+| `VM_SSH_PRIVATE_KEY_B64` | Base64-encoded dedicated deployment private key |
+| `VM_SSH_KNOWN_HOSTS`     | Verified SSH host-key entries                   |
 
 ## Security practices
 
