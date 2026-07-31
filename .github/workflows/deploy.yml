@@ -3,10 +3,10 @@ name: Deploy Trackora
 on:
   push:
     branches:
-      - develop
+      - main
   pull_request:
     branches:
-      - develop
+      - main
   workflow_dispatch:
 
 permissions:
@@ -121,9 +121,9 @@ jobs:
           test -f server/.env
           test -f client/.env.production
 
-          git fetch origin develop
-          git switch develop
-          git pull --ff-only origin develop
+          git fetch origin main
+          git switch main
+          git pull --ff-only origin main
 
           cd "$PROJECT_DIR/server"
           npm ci --omit=dev
