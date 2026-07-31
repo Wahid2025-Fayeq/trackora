@@ -1,9 +1,21 @@
 const Job = require("../models/job");
 const { NotFoundError } = require("../utils/errors");
 
+const createCoverLetterValue = (coverLetter) => {
+  const content =
+    typeof coverLetter?.content === "string" ? coverLetter.content.trim() : "";
+
+  return {
+    content,
+    generatedAt: content ? new Date() : null,
+  };
+};
+
 const getJobs = async (req, res, next) => {
   try {
-    const jobs = await Job.find({ owner: req.user.id }).sort({
+    const jobs = await Job.find({
+      owner: req.user.id,
+    }).sort({
       createdAt: -1,
     });
 
@@ -15,10 +27,16 @@ const getJobs = async (req, res, next) => {
 
 const createJob = async (req, res, next) => {
   try {
-    const newJob = await Job.create({
+    const jobData = {
       ...req.body,
       owner: req.user.id,
-    });
+    };
+
+    if (req.body.coverLetter !== undefined) {
+      jobData.coverLetter = createCoverLetterValue(req.body.coverLetter);
+    }
+
+    const newJob = await Job.create(jobData);
 
     return res.status(201).json(newJob);
   } catch (error) {
@@ -35,6 +53,7 @@ const updateJob = async (req, res, next) => {
       "status",
       "appliedDate",
       "notes",
+      "jobDescription",
       "interview",
       "followUp",
     ];
@@ -46,6 +65,10 @@ const updateJob = async (req, res, next) => {
         updates[field] = req.body[field];
       }
     });
+
+    if (req.body.coverLetter !== undefined) {
+      updates.coverLetter = createCoverLetterValue(req.body.coverLetter);
+    }
 
     const updatedJob = await Job.findOneAndUpdate(
       {

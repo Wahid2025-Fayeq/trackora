@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -5,16 +6,20 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer/Footer";
 import ProtectedRoute from "./components/common/ProtectedRoute/ProtectedRoute";
 import PublicRoute from "./components/common/PublicRoute/PublicRoute";
+import Loader from "./components/ui/Loader/Loader";
 
-import Landing from "./pages/Landing/Landing";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Profile from "./pages/Profile/Profile";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword/ResetPassword";
-import Settings from "./pages/Settings/Settings";
-import NotFound from "./pages/NotFound/NotFound";
+const Landing = lazy(() => import("./pages/Landing/Landing"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const Register = lazy(() => import("./pages/Register/Register"));
+const Profile = lazy(() => import("./pages/Profile/Profile"));
+const ForgotPassword = lazy(
+  () => import("./pages/ForgotPassword/ForgotPassword"),
+);
+const ResetPassword = lazy(() => import("./pages/ResetPassword/ResetPassword"));
+const Settings = lazy(() => import("./pages/Settings/Settings"));
+const CoverLetter = lazy(() => import("./pages/CoverLetter/CoverLetter"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 
 function App() {
   return (
@@ -22,60 +27,71 @@ function App() {
       <Navbar />
 
       <main className="app__main">
-        <Routes>
-          <Route path="/" element={<Landing />} />
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
+            <Route
+              path="/cover-letter"
+              element={
+                <ProtectedRoute>
+                  <CoverLetter />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            }
-          />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
 
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
 
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />

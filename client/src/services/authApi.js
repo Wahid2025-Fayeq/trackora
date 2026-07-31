@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3001";
+import BASE_URL from "../config/api";
 
 function checkResponse(res) {
   return res.text().then((text) => {

@@ -8,6 +8,7 @@ import Input from "../../ui/Input/Input";
 import Select from "../../ui/Select/Select";
 import Textarea from "../../ui/Textarea/Textarea";
 import { statusOptions } from "../../../utils/selectOptions";
+import { getDatePickerFormat } from "../../../utils/formatDate";
 
 import "./JobForm.css";
 
@@ -62,12 +63,20 @@ const defaultInitialValues = {
 
 function JobForm({
   initialValues = defaultInitialValues,
+  defaultStatus = "Applied",
+  dateFormat = "MM/DD/YYYY",
   onSubmit,
   submitButtonText = "Save",
   isSubmitting = false,
 }) {
-  const [formData, setFormData] = useState(defaultInitialValues);
+  const [formData, setFormData] = useState(() => ({
+    ...defaultInitialValues,
+    status: initialValues.status || defaultStatus,
+  }));
+
   const [interviewError, setInterviewError] = useState("");
+
+  const datePickerFormat = getDatePickerFormat(dateFormat);
 
   useEffect(() => {
     const interviewDate = initialValues.interview?.date
@@ -81,6 +90,7 @@ function JobForm({
     setFormData({
       ...defaultInitialValues,
       ...initialValues,
+      status: initialValues.status || defaultStatus,
 
       interview: {
         ...defaultInitialValues.interview,
@@ -109,7 +119,7 @@ function JobForm({
     });
 
     setInterviewError("");
-  }, [initialValues]);
+  }, [initialValues, defaultStatus]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -306,7 +316,7 @@ function JobForm({
                 : null
             }
             onChange={handleApplicationDateChange}
-            dateFormat="MM/dd/yyyy"
+            dateFormat={datePickerFormat}
             placeholderText="Select application date"
             disabled={isSubmitting}
             popperPlacement="bottom-start"
@@ -355,7 +365,7 @@ function JobForm({
                       : null
                   }
                   onChange={handleInterviewDateChange}
-                  dateFormat="MM/dd/yyyy"
+                  dateFormat={datePickerFormat}
                   placeholderText="Select interview date"
                   disabled={isSubmitting}
                   minDate={new Date()}
@@ -466,7 +476,7 @@ function JobForm({
                   : null
               }
               onChange={handleFollowUpDateChange}
-              dateFormat="MM/dd/yyyy"
+              dateFormat={datePickerFormat}
               placeholderText="Select follow-up date"
               disabled={isSubmitting}
               minDate={new Date()}

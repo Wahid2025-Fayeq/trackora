@@ -17,8 +17,8 @@ export const filterOptions = [
 ];
 
 export const sortOptions = [
-  { value: "Newest", label: "Newest First" },
-  { value: "Oldest", label: "Oldest First" },
-  { value: "Company", label: "Company (A–Z)" },
-  { value: "Title", label: "Job Title (A–Z)" },
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "company", label: "Company (A–Z)" },
+  { value: "title", label: "Job Title (A–Z)" },
 ];

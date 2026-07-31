@@ -1,6 +1,6 @@
+import BASE_URL from "../config/api";
 import { jobs } from "../utils/constants";
 
-const BASE_URL = "http://localhost:3001";
 const USE_MOCK_API = false;
 
 const getAuthHeaders = () => {

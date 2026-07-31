@@ -1,24 +1,23 @@
-import { useEffect, useState } from "react";
-import { CalendarDays, MapPin, SearchX, Video } from "lucide-react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { CalendarDays, MapPin, SearchX, Sparkles, Video } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AddJobModal from "../../components/common/AddJobModal/AddJobModal";
 import AnalyticsCard from "../../components/common/AnalyticsCard/AnalyticsCard";
 import DeleteConfirmationModal from "../../components/common/DeleteConfirmationModal/DeleteConfirmationModal";
 import EditJobModal from "../../components/common/EditJobModal/EditJobModal";
+import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
 import JobCard from "../../components/common/JobCard";
+import JobCardSkeleton from "../../components/common/JobCardSkeleton/JobCardSkeleton";
 import SearchBar from "../../components/common/SearchBar/SearchBar";
 import StatsCard from "../../components/common/StatsCard/StatsCard";
 import ViewJobModal from "../../components/common/ViewJobModal/ViewJobModal";
-import MonthlyApplicationsChart from "../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart";
-import StatusChart from "../../components/common/StatusChart/StatusChart";
-import FollowUpReminders from "../../components/common/FollowUpReminders/FollowUpReminders";
-import GenerateCoverLetterModal from "../../components/common/GenerateCoverLetterModal/GenerateCoverLetterModal";
-
 import Button from "../../components/ui/Button/Button";
 import Container from "../../components/ui/Container";
 import Loader from "../../components/ui/Loader/Loader";
 import Select from "../../components/ui/Select/Select";
+import formatDate from "../../utils/formatDate";
 
 import useAuth from "../../hooks/useAuth";
 
@@ -29,16 +28,24 @@ import {
   updateJob,
 } from "../../services/jobsApi";
 
+import getFollowUpReminders from "../../utils/followUpReminders";
 import {
   getJobAnalytics,
   getMonthlyApplicationsData,
   getStatusChartData,
 } from "../../utils/jobAnalytics";
-
-import getFollowUpReminders from "../../utils/followUpReminders";
 import { filterOptions, sortOptions } from "../../utils/selectOptions";
 
 import "./Dashboard.css";
+
+const MonthlyApplicationsChart = lazy(
+  () =>
+    import("../../components/common/MonthlyApplicationsChart/MonthlyApplicationsChart"),
+);
+
+const StatusChart = lazy(
+  () => import("../../components/common/StatusChart/StatusChart"),
+);
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -52,7 +59,7 @@ const getMeetingLink = (meetingLink) => {
     : `https://${meetingLink}`;
 };
 
-const getInterviewCountdown = (date) => {
+const getInterviewCountdown = (date, dateFormat) => {
   const interviewDate = new Date(date);
 
   if (Number.isNaN(interviewDate.getTime())) {
@@ -60,7 +67,6 @@ const getInterviewCountdown = (date) => {
   }
 
   const now = new Date();
-
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const interviewDay = new Date(
@@ -73,11 +79,7 @@ const getInterviewCountdown = (date) => {
     (interviewDay.getTime() - today.getTime()) / MILLISECONDS_PER_DAY,
   );
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(interviewDate);
+  const formattedDate = formatDate(interviewDate, dateFormat);
 
   const formattedTime = new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
@@ -104,18 +106,18 @@ const getInterviewCountdown = (date) => {
 };
 
 function Dashboard() {
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
+
+  const dateFormat = currentUser?.preferences?.dateFormat || "MM/DD/YYYY";
 
   const notifications = {
     interviewReminders:
       currentUser?.preferences?.notifications?.interviewReminders ?? true,
-
     followUpReminders:
       currentUser?.preferences?.notifications?.followUpReminders ?? true,
-
     applicationUpdates:
       currentUser?.preferences?.notifications?.applicationUpdates ?? true,
-
     emailNotifications:
       currentUser?.preferences?.notifications?.emailNotifications ?? false,
   };
@@ -134,9 +136,10 @@ function Dashboard() {
   const [jobToDelete, setJobToDelete] = useState(null);
 
   const [statusFilter, setStatusFilter] = useState("All");
-  const [sortBy, setSortBy] = useState("Newest");
+  const [sortBy, setSortBy] = useState(
+    currentUser?.preferences?.defaultSort || "newest",
+  );
   const [isDeleting, setIsDeleting] = useState(false);
-  const [coverLetterJob, setCoverLetterJob] = useState(null);
 
   const loadJobs = () => {
     setIsLoading(true);
@@ -169,20 +172,16 @@ function Dashboard() {
     loadJobs();
   }, []);
 
+  useEffect(() => {
+    setSortBy(currentUser?.preferences?.defaultSort || "newest");
+  }, [currentUser?.preferences?.defaultSort]);
+
   const handleOpenAddJobModal = () => {
     setIsAddJobModalOpen(true);
   };
 
   const handleCloseAddJobModal = () => {
     setIsAddJobModalOpen(false);
-  };
-
-  const handleOpenCoverLetterModal = (job) => {
-    setCoverLetterJob(job);
-  };
-
-  const handleCloseCoverLetterModal = () => {
-    setCoverLetterJob(null);
   };
 
   const handleViewJobClick = (job) => {
@@ -335,16 +334,16 @@ function Dashboard() {
 
   const sortedJobs = [...filteredJobs].sort((a, b) => {
     switch (sortBy) {
-      case "Oldest":
+      case "oldest":
         return new Date(a.appliedDate) - new Date(b.appliedDate);
 
-      case "Company":
+      case "company":
         return a.company.localeCompare(b.company);
 
-      case "Title":
+      case "title":
         return a.title.localeCompare(b.title);
 
-      case "Newest":
+      case "newest":
       default:
         return new Date(b.appliedDate) - new Date(a.appliedDate);
     }
@@ -401,11 +400,143 @@ function Dashboard() {
           <Button onClick={handleOpenAddJobModal}>Add Job</Button>
         </section>
 
+        <section className="dashboard__cover-letter">
+          <div className="dashboard__cover-letter-icon">
+            <Sparkles size={28} aria-hidden="true" />
+          </div>
+
+          <div className="dashboard__cover-letter-content">
+            <p className="dashboard__cover-letter-label">AI-powered tool</p>
+
+            <h2 className="dashboard__cover-letter-title">
+              Create a tailored cover letter
+            </h2>
+
+            <p className="dashboard__cover-letter-description">
+              Generate a personalized cover letter for any opportunity—even
+              before adding the job to Trackora.
+            </p>
+          </div>
+
+          <Button onClick={() => navigate("/cover-letter")}>
+            <Sparkles size={17} aria-hidden="true" />
+            Generate Cover Letter
+          </Button>
+        </section>
+
         <section className="dashboard__stats">
           <StatsCard title="Applied" value={appliedJobs} />
           <StatsCard title="Interview" value={interviewJobs} />
           <StatsCard title="Saved" value={savedJobs} />
           <StatsCard title="Offer" value={offerJobs} />
+        </section>
+
+        <section className="dashboard__jobs">
+          <h2 className="dashboard__section-title">Recent Applications</h2>
+
+          {jobs.length > 0 && (
+            <>
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+
+              <div className="dashboard__filters">
+                <Select
+                  label="Filter"
+                  name="statusFilter"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                  options={filterOptions}
+                />
+
+                <Select
+                  label="Sort By"
+                  name="sortBy"
+                  value={sortBy}
+                  onChange={(event) => setSortBy(event.target.value)}
+                  options={sortOptions}
+                />
+              </div>
+            </>
+          )}
+
+          {isLoading ? (
+            <div
+              className="dashboard__job-list"
+              role="status"
+              aria-label="Loading jobs"
+            >
+              {Array.from({ length: 3 }, (_, index) => (
+                <JobCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : error ? (
+            <div className="dashboard__error">
+              <h3>Something went wrong</h3>
+              <p>{error}</p>
+
+              <Button variant="secondary" onClick={loadJobs}>
+                Try Again
+              </Button>
+            </div>
+          ) : jobs.length === 0 ? (
+            <div className="dashboard__empty-state">
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
+
+              <h3 className="dashboard__empty-title">Start your job search</h3>
+
+              <p className="dashboard__empty-text">
+                Add your first opportunity or create a tailored cover letter
+                before applying.
+              </p>
+
+              <div className="dashboard__empty-actions">
+                <Button onClick={handleOpenAddJobModal}>
+                  Add Your First Job
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate("/cover-letter")}
+                >
+                  <Sparkles size={17} aria-hidden="true" />
+                  Generate Cover Letter
+                </Button>
+              </div>
+            </div>
+          ) : sortedJobs.length > 0 ? (
+            <div className="dashboard__job-list">
+              {sortedJobs.map((job) => (
+                <JobCard
+                  key={job._id}
+                  job={job}
+                  onView={handleViewJobClick}
+                  onEdit={handleEditJobClick}
+                  onDelete={handleDeleteJob}
+                  dateFormat={dateFormat}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard__empty-state">
+              <SearchX
+                className="dashboard__empty-icon"
+                size={40}
+                aria-hidden="true"
+              />
+
+              <h3 className="dashboard__empty-title">No matching jobs</h3>
+
+              <p className="dashboard__empty-text">
+                Try a different job title, company, location, or filter.
+              </p>
+            </div>
+          )}
         </section>
 
         <section className="dashboard__analytics">
@@ -414,7 +545,6 @@ function Dashboard() {
           <div className="dashboard__analytics-summary">
             <div>
               <span className="dashboard__analytics-label">Total Jobs</span>
-
               <strong className="dashboard__analytics-value">
                 {totalJobs}
               </strong>
@@ -422,7 +552,6 @@ function Dashboard() {
 
             <div>
               <span className="dashboard__analytics-label">Active Jobs</span>
-
               <strong className="dashboard__analytics-value">
                 {activeJobs}
               </strong>
@@ -448,8 +577,10 @@ function Dashboard() {
           </div>
 
           <section className="dashboard__charts">
-            <StatusChart data={statusChartData} />
-            <MonthlyApplicationsChart data={monthlyApplicationsData} />
+            <Suspense fallback={<Loader />}>
+              <StatusChart data={statusChartData} />
+              <MonthlyApplicationsChart data={monthlyApplicationsData} />
+            </Suspense>
           </section>
         </section>
 
@@ -460,6 +591,7 @@ function Dashboard() {
             upcoming={upcoming}
             onView={handleViewJobClick}
             onComplete={handleCompleteFollowUp}
+            dateFormat={dateFormat}
           />
         )}
 
@@ -491,7 +623,10 @@ function Dashboard() {
                           <CalendarDays size={17} aria-hidden="true" />
 
                           <time dateTime={job.interview.date}>
-                            {getInterviewCountdown(job.interview.date)}
+                            {getInterviewCountdown(
+                              job.interview.date,
+                              dateFormat,
+                            )}
                           </time>
                         </div>
 
@@ -550,90 +685,14 @@ function Dashboard() {
             )}
           </section>
         )}
-
-        <section className="dashboard__jobs">
-          <h2 className="dashboard__section-title">Recent Applications</h2>
-
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-          <div className="dashboard__filters">
-            <Select
-              label="Filter"
-              name="statusFilter"
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-              options={filterOptions}
-            />
-
-            <Select
-              label="Sort By"
-              name="sortBy"
-              value={sortBy}
-              onChange={(event) => setSortBy(event.target.value)}
-              options={sortOptions}
-            />
-          </div>
-
-          {isLoading ? (
-            <Loader text="Loading jobs..." />
-          ) : error ? (
-            <div className="dashboard__error">
-              <h3>Something went wrong</h3>
-              <p>{error}</p>
-
-              <Button variant="secondary" onClick={loadJobs}>
-                Try Again
-              </Button>
-            </div>
-          ) : jobs.length === 0 ? (
-            <div className="dashboard__empty-state">
-              <SearchX
-                className="dashboard__empty-icon"
-                size={40}
-                aria-hidden="true"
-              />
-
-              <h3 className="dashboard__empty-title">No jobs yet</h3>
-
-              <p className="dashboard__empty-text">
-                Add your first job application to get started.
-              </p>
-            </div>
-          ) : sortedJobs.length > 0 ? (
-            <div className="dashboard__job-list">
-              {sortedJobs.map((job) => (
-                <JobCard
-                  key={job._id}
-                  job={job}
-                  onView={handleViewJobClick}
-                  onEdit={handleEditJobClick}
-                  onDelete={handleDeleteJob}
-                  onGenerateCoverLetter={handleOpenCoverLetterModal}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="dashboard__empty-state">
-              <SearchX
-                className="dashboard__empty-icon"
-                size={40}
-                aria-hidden="true"
-              />
-
-              <h3 className="dashboard__empty-title">No matching jobs</h3>
-
-              <p className="dashboard__empty-text">
-                Try a different job title, company, location, or filter.
-              </p>
-            </div>
-          )}
-        </section>
       </Container>
 
       <AddJobModal
         isOpen={isAddJobModalOpen}
         onClose={handleCloseAddJobModal}
         onAddJob={handleAddJob}
+        defaultStatus={currentUser?.preferences?.defaultStatus || "Applied"}
+        dateFormat={dateFormat}
       />
 
       <EditJobModal
@@ -641,18 +700,14 @@ function Dashboard() {
         onClose={handleCloseEditJobModal}
         job={selectedJob}
         onUpdateJob={handleUpdateJob}
+        dateFormat={dateFormat}
       />
 
       <ViewJobModal
         isOpen={isViewJobModalOpen}
         onClose={handleCloseViewJobModal}
         job={selectedJob}
-      />
-
-      <GenerateCoverLetterModal
-        isOpen={Boolean(coverLetterJob)}
-        onClose={handleCloseCoverLetterModal}
-        job={coverLetterJob}
+        dateFormat={dateFormat}
       />
 
       <DeleteConfirmationModal

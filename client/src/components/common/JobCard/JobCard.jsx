@@ -1,11 +1,11 @@
-import { Bell, CheckCircle, Sparkles } from "lucide-react";
+import { Bell, CheckCircle } from "lucide-react";
 
 import Button from "../../ui/Button";
 import formatDate from "../../../utils/formatDate";
 import { statusConfig } from "../../../utils/statusConfig";
 import "./JobCard.css";
 
-function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
+function JobCard({ job, onView, onEdit, onDelete, dateFormat = "MM/DD/YYYY" }) {
   const { title, company, status, appliedDate, location, followUp } = job;
 
   const currentStatus = statusConfig[status];
@@ -36,45 +36,46 @@ function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
           >
             {StatusIcon && <StatusIcon size={14} aria-hidden="true" />}
 
-            {currentStatus?.label}
+            {currentStatus?.label || status}
           </span>
 
-          <span>{formatDate(appliedDate)}</span>
-          <span>{location}</span>
+          <span>{formatDate(appliedDate, dateFormat)}</span>
+
+          <span>{location || "Location not provided"}</span>
         </div>
+      </div>
 
-        {hasFollowUp && (
-          <div
-            className={`job-card__follow-up ${
-              isFollowUpCompleted
-                ? "job-card__follow-up_completed"
+      {hasFollowUp && (
+        <div
+          className={`job-card__follow-up ${
+            isFollowUpCompleted
+              ? "job-card__follow-up_completed"
+              : isFollowUpOverdue
+                ? "job-card__follow-up_overdue"
+                : "job-card__follow-up_upcoming"
+          }`}
+        >
+          <div className="job-card__follow-up-info">
+            {isFollowUpCompleted ? (
+              <CheckCircle size={16} aria-hidden="true" />
+            ) : (
+              <Bell size={16} aria-hidden="true" />
+            )}
+
+            <span className="job-card__follow-up-label">
+              {isFollowUpCompleted
+                ? "Follow-up completed"
                 : isFollowUpOverdue
-                  ? "job-card__follow-up_overdue"
-                  : "job-card__follow-up_upcoming"
-            }`}
-          >
-            <div className="job-card__follow-up-info">
-              {isFollowUpCompleted ? (
-                <CheckCircle size={16} aria-hidden="true" />
-              ) : (
-                <Bell size={16} aria-hidden="true" />
-              )}
-
-              <span className="job-card__follow-up-label">
-                {isFollowUpCompleted
-                  ? "Follow-up completed"
-                  : isFollowUpOverdue
-                    ? "Follow-up overdue"
-                    : "Follow-up"}
-              </span>
-            </div>
-
-            <span className="job-card__follow-up-date">
-              {formatDate(followUp.date)}
+                  ? "Follow-up overdue"
+                  : "Follow-up reminder"}
             </span>
           </div>
-        )}
-      </div>
+
+          <time className="job-card__follow-up-date" dateTime={followUp.date}>
+            {formatDate(followUp.date, dateFormat)}
+          </time>
+        </div>
+      )}
 
       <div className="job-card__actions">
         <Button
@@ -84,16 +85,6 @@ function JobCard({ job, onView, onEdit, onDelete, onGenerateCoverLetter }) {
           onClick={handleViewClick}
         >
           View
-        </Button>
-
-        <Button
-          type="button"
-          size="small"
-          variant="secondary"
-          onClick={() => onGenerateCoverLetter(job)}
-        >
-          <Sparkles size={15} aria-hidden="true" />
-          Cover Letter
         </Button>
 
         <Button

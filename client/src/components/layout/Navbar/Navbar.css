@@ -29,6 +29,7 @@
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .navbar__link:hover {
@@ -186,14 +187,6 @@
 .navbar__link--active {
   color: var(--color-primary);
   font-weight: 700;
-}
-
-.navbar__link {
-  transition: color 0.2s ease;
-}
-
-.navbar__link:hover {
-  color: var(--color-primary);
 }
 
 @media screen and (max-width: 600px) {

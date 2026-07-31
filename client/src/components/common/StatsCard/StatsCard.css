@@ -3,13 +3,15 @@
   align-items: center;
   gap: 16px;
   padding: 24px;
-  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 16px;
+  background-color: var(--color-surface);
   box-shadow: var(--shadow-card);
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .stats-card__icon {
@@ -20,13 +22,18 @@
   height: 48px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: var(--color-surface-secondary);
   color: var(--color-primary);
+  background-color: var(--color-surface-secondary);
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .stats-card__content {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .stats-card__title {
@@ -34,6 +41,7 @@
   color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .stats-card__value {
@@ -42,10 +50,36 @@
   font-size: 30px;
   font-weight: 700;
   line-height: 1;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .stats-card:active {
   transform: scale(0.98);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stats-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-primary);
+    box-shadow: 0 12px 28px rgb(15 23 42 / 12%);
+  }
+
+  .stats-card:hover .stats-card__icon {
+    transform: scale(1.08) rotate(-3deg);
+    color: var(--color-white);
+    background-color: var(--color-primary);
+  }
+
+  .stats-card:hover .stats-card__value {
+    color: var(--color-primary);
+    transform: translateX(2px);
+  }
+
+  .stats-card:hover .stats-card__title {
+    color: var(--color-text);
+  }
 }
 
 @media (max-width: 600px) {
@@ -53,11 +87,6 @@
     min-width: 0;
     gap: 10px;
     padding: 14px;
-  }
-
-  .stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card);
   }
 
   .stats-card__icon {
@@ -71,5 +100,14 @@
 
   .stats-card__value {
     font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stats-card,
+  .stats-card__icon,
+  .stats-card__title,
+  .stats-card__value {
+    transition: none;
   }
 }
