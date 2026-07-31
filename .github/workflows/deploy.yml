@@ -122,8 +122,7 @@ jobs:
           test -f client/.env.production
 
           git fetch origin main
-          git switch main
-          git pull --ff-only origin main
+          git checkout -B main FETCH_HEAD
 
           cd "$PROJECT_DIR/server"
           npm ci --omit=dev
