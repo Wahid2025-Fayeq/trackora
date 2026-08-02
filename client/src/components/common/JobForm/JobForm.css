@@ -118,17 +118,16 @@
 }
 
 .interview-time-input .input__field {
-  text-align: center;
+  width: 100%;
+  min-width: 0;
+  padding: 0 12px;
+  text-align: left;
+  appearance: auto;
+  -webkit-appearance: auto;
 }
 
 .interview-time-input .input__field::-webkit-date-and-time-value {
-  text-align: center;
-}
-
-.interview-time-input .input__field::-webkit-datetime-edit {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+  text-align: left;
 }
 
 .react-datepicker__portal {
