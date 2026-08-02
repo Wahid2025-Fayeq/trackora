@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Calendar } from "lucide-react";
 
 import Button from "../../ui/Button/Button";
 import Input from "../../ui/Input/Input";
+import DateInput from "../../ui/DateInput/DateInput";
 import Select from "../../ui/Select/Select";
 import Textarea from "../../ui/Textarea/Textarea";
 import { statusOptions } from "../../../utils/selectOptions";
@@ -310,6 +310,9 @@ function JobForm({
         <div className="job-form__datepicker-input">
           <DatePicker
             id="application-date"
+            withPortal
+            inputMode="none"
+            customInput={<DateInput />}
             selected={
               formData.appliedDate
                 ? new Date(`${formData.appliedDate}T00:00:00`)
@@ -319,17 +322,9 @@ function JobForm({
             dateFormat={datePickerFormat}
             placeholderText="Select application date"
             disabled={isSubmitting}
-            popperPlacement="bottom-start"
-            popperClassName="job-form__datepicker-popper"
             calendarClassName="job-form__calendar"
             wrapperClassName="job-form__datepicker-wrapper"
             showPopperArrow={false}
-          />
-
-          <Calendar
-            className="job-form__datepicker-icon"
-            size={16}
-            aria-hidden="true"
           />
         </div>
       </div>
@@ -359,6 +354,9 @@ function JobForm({
               <div className="job-form__datepicker-input">
                 <DatePicker
                   id="interview-date"
+                  withPortal
+                  inputMode="none"
+                  customInput={<DateInput />}
                   selected={
                     formData.interview.date
                       ? new Date(`${formData.interview.date}T00:00:00`)
@@ -369,22 +367,15 @@ function JobForm({
                   placeholderText="Select interview date"
                   disabled={isSubmitting}
                   minDate={new Date()}
-                  popperPlacement="bottom-start"
-                  popperClassName="job-form__datepicker-popper"
                   calendarClassName="job-form__calendar"
                   wrapperClassName="job-form__datepicker-wrapper"
                   showPopperArrow={false}
-                />
-
-                <Calendar
-                  className="job-form__datepicker-icon"
-                  size={16}
-                  aria-hidden="true"
                 />
               </div>
             </div>
 
             <Input
+              className="interview-time-input"
               label="Interview Time"
               type="time"
               name="time"
@@ -470,6 +461,9 @@ function JobForm({
           <div className="job-form__datepicker-input">
             <DatePicker
               id="follow-up-date"
+              withPortal
+              inputMode="none"
+              customInput={<DateInput />}
               selected={
                 formData.followUp.date
                   ? new Date(`${formData.followUp.date}T00:00:00`)
@@ -480,17 +474,9 @@ function JobForm({
               placeholderText="Select follow-up date"
               disabled={isSubmitting}
               minDate={new Date()}
-              popperPlacement="bottom-start"
-              popperClassName="job-form__datepicker-popper"
               calendarClassName="job-form__calendar"
               wrapperClassName="job-form__datepicker-wrapper"
               showPopperArrow={false}
-            />
-
-            <Calendar
-              className="job-form__datepicker-icon"
-              size={16}
-              aria-hidden="true"
             />
           </div>
         </div>
