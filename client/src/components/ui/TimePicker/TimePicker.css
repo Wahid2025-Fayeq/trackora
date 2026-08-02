@@ -1,0 +1,105 @@
+.time-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 16px;
+}
+
+.time-picker__label {
+  color: var(--color-label);
+  font-size: 14px;
+  font-weight: 600;
+}
+.time-picker__controls {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(90px, 1fr) minmax(76px, 90px);
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.time-picker__select-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.time-picker__select-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--color-text-secondary);
+  border-bottom: 2px solid var(--color-text-secondary);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.time-picker__select {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 32px 0 10px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 8px;
+  outline: none;
+  background-color: var(--color-input-background);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 16px;
+  text-align: center;
+  text-align-last: center;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.time-picker__select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.time-picker__select:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.time-picker__select-wrapper:has(.time-picker__select:disabled)::after {
+  opacity: 0.5;
+}
+
+.time-picker__select_period {
+  text-align: center;
+  text-align-last: center;
+}
+
+.time-picker__error {
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+@media screen and (max-width: 420px) {
+  .time-picker__controls {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 70px;
+    gap: 6px;
+  }
+
+  .time-picker__select {
+    padding-right: 28px;
+    padding-left: 8px;
+    font-size: 15px;
+  }
+
+  .time-picker__select-wrapper::after {
+    right: 10px;
+    width: 6px;
+    height: 6px;
+  }
+}

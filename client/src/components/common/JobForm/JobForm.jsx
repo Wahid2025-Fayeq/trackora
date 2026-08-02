@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../ui/Button/Button";
 import Input from "../../ui/Input/Input";
 import DateInput from "../../ui/DateInput/DateInput";
+import TimePicker from "../../ui/TimePicker/TimePicker";
 import Select from "../../ui/Select/Select";
 import Textarea from "../../ui/Textarea/Textarea";
 import { statusOptions } from "../../../utils/selectOptions";
@@ -152,6 +153,18 @@ function JobForm({
       interview: {
         ...previousData.interview,
         [name]: value,
+      },
+    }));
+  };
+
+  const handleInterviewTimeChange = (time) => {
+    setInterviewError("");
+
+    setFormData((previousData) => ({
+      ...previousData,
+      interview: {
+        ...previousData.interview,
+        time,
       },
     }));
   };
@@ -374,13 +387,10 @@ function JobForm({
               </div>
             </div>
 
-            <Input
-              className="interview-time-input"
+            <TimePicker
               label="Interview Time"
-              type="time"
-              name="time"
               value={formData.interview.time}
-              onChange={handleInterviewChange}
+              onChange={handleInterviewTimeChange}
               disabled={isSubmitting}
             />
           </div>

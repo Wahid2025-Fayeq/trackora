@@ -34,9 +34,9 @@
 
 .job-form__interview-datetime {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: end;
+  grid-template-columns: 1fr;
   gap: 16px;
+  width: 100%;
 }
 
 .job-form__interview-datetime > * {
@@ -115,19 +115,6 @@
   color: var(--color-danger);
   font-size: 14px;
   font-weight: 500;
-}
-
-.interview-time-input .input__field {
-  width: 100%;
-  min-width: 0;
-  padding: 0 12px;
-  text-align: left;
-  appearance: auto;
-  -webkit-appearance: auto;
-}
-
-.interview-time-input .input__field::-webkit-date-and-time-value {
-  text-align: left;
 }
 
 .react-datepicker__portal {
